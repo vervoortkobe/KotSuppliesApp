@@ -15,3 +15,15 @@ export class LoginUserDto {
   @IsString()
   username: string;
 }
+
+export class UserResponseDto {
+  @IsString()
+  guid: string;
+
+  @IsString()
+  username: string;
+
+  @IsString()
+  @IsOptional()
+  profileImageUrl?: string;
+}

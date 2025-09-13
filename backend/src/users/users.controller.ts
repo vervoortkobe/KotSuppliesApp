@@ -44,4 +44,18 @@ export class UsersController {
     }
     return user;
   }
+
+  @Get()
+  async findAll() {
+    return this.usersService.findAll();
+  }
+
+  @Get(':guid')
+  async findOne(@Param('guid') guid: string) {
+    const user = await this.usersService.findOne(guid);
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+    return user;
+  }
 }
