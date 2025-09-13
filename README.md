@@ -1,2 +1,3 @@
 # KotSuppliesApp
-Een handige app met Go backend om de voorraad aan eten op kot op te volgen.
+
+Een handige Lynx app met Node backend om de voorraad aan eten op kot op te volgen.
