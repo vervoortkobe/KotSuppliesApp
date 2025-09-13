@@ -1,4 +1,11 @@
-import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryColumn,
+  Column,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { List } from './list.entity';
 import { Notification } from './notification.entity';
@@ -14,7 +21,8 @@ export class User {
   @Column({ nullable: true })
   profileImageGuid: string;
 
-  @OneToMany(() => List, (list) => list.users)
+  @ManyToMany(() => List, (list) => list.users)
+  @JoinTable()
   accessibleLists: List[];
 
   @OneToMany(() => Notification, (notification) => notification.user)
