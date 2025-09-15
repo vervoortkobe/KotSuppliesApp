@@ -88,6 +88,10 @@ export class ItemsService {
       throw new BadRequestException('Item not found');
     }
     const list = await this.listRepository.findOneBy({ guid: listGuid });
+    if (!list) {
+      throw new BadRequestException('List not found');
+    }
+
     if (list.type === 'image_count' && updateItemDto.checked !== undefined) {
       throw new BadRequestException('Checked field is only for check lists');
     }
@@ -132,6 +136,9 @@ export class ItemsService {
       throw new BadRequestException('Item not found');
     }
     const list = await this.listRepository.findOneBy({ guid: listGuid });
+    if (!list) {
+      throw new BadRequestException('List not found');
+    }
     await this.itemRepository.remove(item);
     await this.notificationsService.notifyUsers(
       list,
@@ -149,7 +156,11 @@ export class ItemsService {
     if (!list) {
       throw new BadRequestException('List not found');
     }
-    const results = [];
+    type BulkResult =
+      | { guid: string; error: string }
+      | { guid: string; status: string; item: Item };
+    const results: BulkResult[] = [];
+
     for (const { guid, data } of bulkItemDto.items) {
       const item = await this.findOne(listGuid, guid);
       if (item) {
