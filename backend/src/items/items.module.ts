@@ -6,14 +6,14 @@ import { Item } from '../entities/item.entity';
 import { List } from '../entities/list.entity';
 import { Category } from '../entities/category.entity';
 import { Image } from '../entities/image.entity';
-import { Notification } from '../entities/notification.entity';
-import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Item, List, Category, Image, Notification]),
+    TypeOrmModule.forFeature([Item, List, Category, Image]),
+    NotificationsModule,
   ],
   controllers: [ItemsController],
-  providers: [ItemsService, NotificationsService],
+  providers: [ItemsService],
 })
 export class ItemsModule {}
