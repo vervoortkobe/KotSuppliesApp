@@ -1,7 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
 import { User } from '../entities/user.entity';
 import { Image } from '../entities/image.entity';
 import { CreateUserDto, UpdateUserDto, UserResponseDto } from './dto';
@@ -14,7 +13,7 @@ export class UsersService {
   ) {}
 
   private getImageUrl(guid: string): string {
-    return `http://localhost:3000/images/${guid}`;
+    return `${process.env.API_URL}/images/${guid}`;
   }
 
   async create(createUserDto: CreateUserDto, file?: Express.Multer.File) {
