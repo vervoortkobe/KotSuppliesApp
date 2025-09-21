@@ -41,3 +41,5 @@ final OutlineInputBorder kFocusedInputBorder = OutlineInputBorder(
   borderRadius: kDefaultBorderRadius,
   borderSide: const BorderSide(color: kPrimaryColor, width: 2.0),
 );
+
+const TextStyle kErrorTextStyle = TextStyle(color: kErrorColor, fontSize: 14);
