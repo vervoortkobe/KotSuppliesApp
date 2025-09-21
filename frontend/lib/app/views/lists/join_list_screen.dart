@@ -35,15 +35,21 @@ class JoinListScreenState extends State<JoinListScreen> {
     );
 
     if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Joined list successfully!'),
-          backgroundColor: kSuccessColor,
-        ),
-      );
-      Navigator.of(context).pop(true); // Pop with true to indicate success
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Joined list successfully!'),
+            backgroundColor: kSuccessColor,
+          ),
+        );
+        Navigator.of(context).pop(true); // Pop with true to indicate success
+      }
     } else {
-      _showErrorSnackBar(listViewModel.errorMessage ?? 'Failed to join list.');
+      if (mounted) {
+        _showErrorSnackBar(
+          listViewModel.errorMessage ?? 'Failed to join list.',
+        );
+      }
     }
   }
 

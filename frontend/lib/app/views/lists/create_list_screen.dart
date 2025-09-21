@@ -44,6 +44,7 @@ class CreateListScreenState extends State<CreateListScreen> {
     );
 
     if (newList != null) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('List "${newList.title}" created successfully!'),
@@ -52,6 +53,7 @@ class CreateListScreenState extends State<CreateListScreen> {
       );
       Navigator.of(context).pop(true); // Pop with true to indicate success
     } else {
+      if (!mounted) return;
       _showErrorSnackBar(
         listViewModel.errorMessage ?? 'Failed to create list.',
       );

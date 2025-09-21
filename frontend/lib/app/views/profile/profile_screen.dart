@@ -42,6 +42,7 @@ class ProfileScreenState extends State<ProfileScreen> {
     );
 
     if (success) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Profile updated successfully!'),
@@ -50,6 +51,7 @@ class ProfileScreenState extends State<ProfileScreen> {
       );
       Navigator.of(context).pop();
     } else {
+      if (!mounted) return;
       _showErrorSnackBar(
         authViewModel.errorMessage ?? 'Failed to update profile.',
       );

@@ -36,10 +36,12 @@ class RegisterScreenState extends State<RegisterScreen> {
     );
 
     if (success) {
+      if (!mounted) return;
       Navigator.of(
         context,
       ).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
     } else {
+      if (!mounted) return;
       _showErrorSnackBar(authViewModel.errorMessage ?? 'Registration failed!');
     }
   }

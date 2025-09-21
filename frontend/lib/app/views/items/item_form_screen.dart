@@ -119,7 +119,9 @@ class ItemFormScreenState extends State<ItemFormScreen> {
           ),
         );
       }
-      Navigator.of(context).pop(true); // Pop with true to indicate success
+      if (mounted) {
+        Navigator.of(context).pop(true); // Pop with true to indicate success
+      }
     } catch (e) {
       _showErrorSnackBar(itemViewModel.errorMessage ?? 'Failed to save item.');
     }
