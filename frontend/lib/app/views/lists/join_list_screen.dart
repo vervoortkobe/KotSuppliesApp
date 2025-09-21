@@ -7,13 +7,13 @@ import 'package:kotsupplies/app/view_models/list_view_model.dart';
 class JoinListScreen extends StatefulWidget {
   final String userGuid;
 
-  const JoinListScreen({Key? key, required this.userGuid}) : super(key: key);
+  const JoinListScreen({super.key, required this.userGuid});
 
   @override
-  _JoinListScreenState createState() => _JoinListScreenState();
+  JoinListScreenState createState() => JoinListScreenState();
 }
 
-class _JoinListScreenState extends State<JoinListScreen> {
+class JoinListScreenState extends State<JoinListScreen> {
   final _shareCodeController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 

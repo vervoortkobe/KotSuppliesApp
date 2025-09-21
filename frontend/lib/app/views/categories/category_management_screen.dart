@@ -8,15 +8,14 @@ import 'package:kotsupplies/app/widgets/app_loading_indicator.dart';
 class CategoryManagementScreen extends StatefulWidget {
   final String listGuid;
 
-  const CategoryManagementScreen({Key? key, required this.listGuid})
-    : super(key: key);
+  const CategoryManagementScreen({super.key, required this.listGuid});
 
   @override
-  _CategoryManagementScreenState createState() =>
-      _CategoryManagementScreenState();
+  CategoryManagementScreenState createState() =>
+      CategoryManagementScreenState();
 }
 
-class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
+class CategoryManagementScreenState extends State<CategoryManagementScreen> {
   final _categoryNameController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -56,18 +55,20 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
     }
 
     if (success) {
-      Navigator.of(context).pop(); // Close dialog
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Category $action successfully!'),
-          backgroundColor: kSuccessColor,
-        ),
-      );
-      // No need to call fetchListDetails explicitly here, itemViewModel handles notifyListeners
+      if (mounted) {
+        Navigator.of(context).pop(); // Close dialog
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Category $action successfully!'),
+            backgroundColor: kSuccessColor,
+          ),
+        );
+      }
     }
   }
 
   Future<void> _deleteCategory(String categoryGuid, String categoryName) async {
+    final itemViewModel = Provider.of<ItemViewModel>(context, listen: false);
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -93,19 +94,22 @@ class _CategoryManagementScreenState extends State<CategoryManagementScreen> {
     );
 
     if (confirm == true) {
-      final itemViewModel = Provider.of<ItemViewModel>(context, listen: false);
       try {
         await itemViewModel.deleteCategory(widget.listGuid, categoryGuid);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Category deleted successfully!'),
-            backgroundColor: kSuccessColor,
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Category deleted successfully!'),
+              backgroundColor: kSuccessColor,
+            ),
+          );
+        }
       } catch (e) {
-        _showErrorSnackBar(
-          itemViewModel.errorMessage ?? 'Failed to delete category.',
-        );
+        if (mounted) {
+          _showErrorSnackBar(
+            itemViewModel.errorMessage ?? 'Failed to delete category.',
+          );
+        }
       }
     }
   }

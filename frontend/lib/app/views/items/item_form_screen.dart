@@ -17,18 +17,18 @@ class ItemFormScreen extends StatefulWidget {
   final List<Category>? categories; // For image_count lists
 
   const ItemFormScreen({
-    Key? key,
+    super.key,
     required this.listGuid,
     required this.listType,
     this.item,
     this.categories,
-  }) : super(key: key);
+  });
 
   @override
-  _ItemFormScreenState createState() => _ItemFormScreenState();
+  ItemFormScreenState createState() => ItemFormScreenState();
 }
 
-class _ItemFormScreenState extends State<ItemFormScreen> {
+class ItemFormScreenState extends State<ItemFormScreen> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   bool _checked = false;
@@ -181,7 +181,7 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
                 if (widget.categories != null &&
                     widget.categories!.isNotEmpty) ...[
                   DropdownButtonFormField<String>(
-                    value: _selectedCategoryGuid,
+                    initialValue: _selectedCategoryGuid,
                     hint: const Text('Select Category (Optional)'),
                     decoration: InputDecoration(
                       border: kDefaultInputBorder,
@@ -263,7 +263,7 @@ class _ItemFormScreenState extends State<ItemFormScreen> {
                       _checked = newValue;
                     });
                   },
-                  activeColor: kPrimaryColor,
+                  activeThumbColor: kPrimaryColor,
                 ),
               ],
               const SizedBox(height: kLargePadding),

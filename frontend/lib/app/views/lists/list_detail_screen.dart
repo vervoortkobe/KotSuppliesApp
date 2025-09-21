@@ -13,7 +13,7 @@ import 'package:kotsupplies/app/views/items/item_form_screen.dart';
 class ListDetailScreen extends StatefulWidget {
   final String listGuid;
 
-  const ListDetailScreen({Key? key, required this.listGuid}) : super(key: key);
+  const ListDetailScreen({super.key, required this.listGuid});
 
   @override
   State<ListDetailScreen> createState() => _ListDetailScreenState();
@@ -210,7 +210,6 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                 icon: const Icon(Icons.edit),
                 tooltip: 'Edit List',
                 onPressed: () {
-                  // TODO: Implement Edit List Screen
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text(
@@ -224,7 +223,6 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                 icon: const Icon(Icons.delete),
                 tooltip: 'Delete List',
                 onPressed: () async {
-                  // TODO: Implement Delete List confirmation and logic
                   final confirm = await showDialog<bool>(
                     context: context,
                     builder: (ctx) => AlertDialog(

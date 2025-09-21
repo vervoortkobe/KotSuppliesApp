@@ -14,7 +14,7 @@ import 'package:kotsupplies/app/widgets/app_loading_indicator.dart';
 import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -62,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
       return LoginScreen();
     }
 
-    List<Widget> _pages = <Widget>[
+    List<Widget> pages = <Widget>[
       _buildListsTab(listViewModel, authViewModel.currentUser!.guid),
       _buildNotificationsTab(notificationViewModel),
     ];
@@ -93,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: _pages[_selectedIndex],
+      body: pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

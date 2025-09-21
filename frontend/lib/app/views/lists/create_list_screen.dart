@@ -6,13 +6,13 @@ import 'package:kotsupplies/app/models/list.dart';
 import 'package:kotsupplies/app/view_models/list_view_model.dart';
 
 class CreateListScreen extends StatefulWidget {
-  const CreateListScreen({Key? key}) : super(key: key);
+  const CreateListScreen({super.key});
 
   @override
-  _CreateListScreenState createState() => _CreateListScreenState();
+  CreateListScreenState createState() => CreateListScreenState();
 }
 
-class _CreateListScreenState extends State<CreateListScreen> {
+class CreateListScreenState extends State<CreateListScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   ListType? _selectedListType;
@@ -99,7 +99,7 @@ class _CreateListScreenState extends State<CreateListScreen> {
               ),
               const SizedBox(height: kDefaultPadding),
               DropdownButtonFormField<ListType>(
-                value: _selectedListType,
+                initialValue: _selectedListType,
                 hint: const Text('Select List Type'),
                 decoration: InputDecoration(
                   border: kDefaultInputBorder,
