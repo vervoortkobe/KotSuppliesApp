@@ -37,9 +37,10 @@ class RegisterScreenState extends State<RegisterScreen> {
 
     if (success) {
       if (!mounted) return;
-      Navigator.of(
-        context,
-      ).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        (Route<dynamic> route) => false,
+      );
     } else {
       if (!mounted) return;
       _showErrorSnackBar(authViewModel.errorMessage ?? 'Registration failed!');
