@@ -110,7 +110,7 @@ class ApiService {
 
   Future<User> login(String username) async {
     final response = await _postJson('/users/login', {'username': username});
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       return User.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to login: ${response.body}');

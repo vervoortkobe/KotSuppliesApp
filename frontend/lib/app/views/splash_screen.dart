@@ -6,7 +6,7 @@ import 'package:kotsupplies/app/constants/app_constants.dart';
 import 'package:kotsupplies/app/view_models/auth_view_model.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   SplashScreenState createState() => SplashScreenState();

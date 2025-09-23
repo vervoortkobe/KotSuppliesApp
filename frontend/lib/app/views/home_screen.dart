@@ -26,7 +26,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _loadInitialData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadInitialData();
+    });
   }
 
   Future<void> _loadInitialData() async {
@@ -58,7 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final notificationViewModel = Provider.of<NotificationViewModel>(context);
 
     if (authViewModel.currentUser == null) {
-      // Should not happen if splash screen works, but as a fallback
       return LoginScreen();
     }
 
@@ -93,7 +94,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: pages[_selectedIndex],
+      body: RefreshIndicator(
+        onRefresh: () => _loadInitialData(),
+        child: pages[_selectedIndex],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -160,17 +164,31 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         listViewModel.isLoading
-            ? const AppLoadingIndicator()
+            ? const Expanded(child: AppLoadingIndicator())
             : listViewModel.errorMessage != null
             ? Text(listViewModel.errorMessage!, style: kErrorTextStyle)
             : Expanded(
                 child: listViewModel.userLists.isEmpty
-                    ? Center(
-                        child: Text(
-                          'No lists yet. Create one or join an existing one!',
-                          style: kBodyTextStyle.copyWith(color: Colors.grey),
-                          textAlign: TextAlign.center,
-                        ),
+                    ? LayoutBuilder(
+                        builder: (context, constraints) {
+                          return SingleChildScrollView(
+                            physics: AlwaysScrollableScrollPhysics(),
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minHeight: constraints.maxHeight,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'No lists yet.\nCreate one or join an existing one!',
+                                  style: kBodyTextStyle.copyWith(
+                                    color: Colors.grey,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       )
                     : ListView.builder(
                         itemCount: listViewModel.userLists.length,
@@ -255,16 +273,30 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Text('Recent Notifications', style: kSubtitleStyle),
         ),
         notificationViewModel.isLoading
-            ? const AppLoadingIndicator()
+            ? const Expanded(child: AppLoadingIndicator())
             : notificationViewModel.errorMessage != null
             ? Text(notificationViewModel.errorMessage!, style: kErrorTextStyle)
             : Expanded(
                 child: notificationViewModel.notifications.isEmpty
-                    ? Center(
-                        child: Text(
-                          'No new notifications.',
-                          style: kBodyTextStyle.copyWith(color: Colors.grey),
-                        ),
+                    ? LayoutBuilder(
+                        builder: (context, constraints) {
+                          return SingleChildScrollView(
+                            physics: AlwaysScrollableScrollPhysics(),
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minHeight: constraints.maxHeight,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'No new notifications.',
+                                  style: kBodyTextStyle.copyWith(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       )
                     : ListView.builder(
                         itemCount: notificationViewModel.notifications.length,
