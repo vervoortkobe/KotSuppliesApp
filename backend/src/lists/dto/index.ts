@@ -10,6 +10,9 @@ export class CreateListDto {
 
   @IsEnum(['image_count', 'check'])
   type: 'image_count' | 'check';
+
+  @IsString()
+  creatorGuid: string;
 }
 
 export class UpdateListDto {

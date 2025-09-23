@@ -16,21 +16,25 @@ class SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _checkLogin();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkLogin();
+    });
   }
 
   Future<void> _checkLogin() async {
     final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     await authViewModel.checkLoginStatus();
 
-    if (authViewModel.currentUser != null) {
-      Navigator.of(
-        context,
-      ).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
-    } else {
-      Navigator.of(
-        context,
-      ).pushReplacement(MaterialPageRoute(builder: (_) => LoginScreen()));
+    if (mounted) {
+      if (authViewModel.currentUser != null) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      } else {
+        Navigator.of(
+          context,
+        ).pushReplacement(MaterialPageRoute(builder: (_) => LoginScreen()));
+      }
     }
   }
 
@@ -42,14 +46,14 @@ class SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.checklist, size: 100, color: Colors.white),
-            SizedBox(height: kDefaultPadding),
+            const Icon(Icons.checklist, size: 100, color: Colors.white),
+            const SizedBox(height: kDefaultPadding),
             Text(
               'KOT Supplies',
               style: kHeadingStyle.copyWith(color: Colors.white),
             ),
-            SizedBox(height: kLargePadding),
-            CircularProgressIndicator(color: Colors.white),
+            const SizedBox(height: kLargePadding),
+            const CircularProgressIndicator(color: Colors.white),
           ],
         ),
       ),

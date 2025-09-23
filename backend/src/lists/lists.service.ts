@@ -19,18 +19,30 @@ export class ListsService {
   ) {}
 
   async create(createListDto: CreateListDto) {
+    const creator = await this.userRepository.findOneBy({
+      guid: createListDto.creatorGuid,
+    });
+
+    if (!creator) {
+      throw new BadRequestException('Creator (user) not found');
+    }
+
     const list = new List();
     list.title = createListDto.title;
     list.description = createListDto.description || '';
     list.guid = uuidv4();
     list.type = createListDto.type;
     list.shareCode = Math.random().toString(36).substring(2, 8);
+
+    list.users = [creator];
+
     if (createListDto.type === 'image_count') {
       const defaultCategory = new Category();
       defaultCategory.name = 'uncategorized';
       defaultCategory.list = list;
       list.categories = [defaultCategory];
     }
+
     return this.listRepository.save(list);
   }
 

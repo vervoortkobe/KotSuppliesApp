@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-// Your API Base URL
-const String kApiBaseUrl =
-    'http://localhost:3000'; // IMPORTANT: Replace with your actual API URL!
+// API Base URL
+const String kApiBaseUrl = 'https://api.vervoortkobe.be.eu.org';
 
 // Paddings
 const double kDefaultPadding = 16.0;
