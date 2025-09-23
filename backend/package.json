@@ -9,6 +9,7 @@
     "build": "bun nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "bun nest start",
+    "startnest": "nest start",
     "start:dev": "bun nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
