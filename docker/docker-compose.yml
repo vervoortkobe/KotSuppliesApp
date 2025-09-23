@@ -1,0 +1,13 @@
+services:
+  app:
+    build:
+      context: ../backend
+      container_name: kot-supplies-app
+    environment:
+      - API_URL=${API_URL}
+      - PORT=${PORT}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../backend:/app
+      - /app/node_modules
