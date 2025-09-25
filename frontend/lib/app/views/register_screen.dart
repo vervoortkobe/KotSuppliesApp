@@ -51,7 +51,10 @@ class RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Register', style: kHeadingStyle),
+        title: Text(
+          'Register',
+          style: kHeadingStyle.copyWith(color: Colors.white),
+        ),
         backgroundColor: kPrimaryColor,
         foregroundColor: Colors.white,
       ),

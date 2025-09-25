@@ -64,7 +64,10 @@ class CreateListScreenState extends State<CreateListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create New List', style: kHeadingStyle),
+        title: Text(
+          'Create New List',
+          style: kHeadingStyle.copyWith(color: Colors.white),
+        ),
         backgroundColor: kPrimaryColor,
         foregroundColor: Colors.white,
       ),

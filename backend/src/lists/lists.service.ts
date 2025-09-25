@@ -46,6 +46,12 @@ export class ListsService {
     return this.listRepository.save(list);
   }
 
+  async findAll() {
+    return this.listRepository.find({
+      relations: ['users', 'categories', 'items', 'items.category'],
+    });
+  }
+
   async findOne(guid: string) {
     return this.listRepository.findOne({
       where: { guid },

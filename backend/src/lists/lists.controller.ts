@@ -20,6 +20,11 @@ export class ListsController {
     return this.listsService.create(createListDto);
   }
 
+  @Get()
+  async findAll() {
+    return this.listsService.findAll();
+  }
+
   @Get(':guid')
   async findOne(@Param('guid') guid: string) {
     const list = await this.listsService.findOne(guid);

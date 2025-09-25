@@ -70,7 +70,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('KOT Supplies', style: kHeadingStyle),
+        title: Text(
+          'KotSupplies',
+          style: kHeadingStyle.copyWith(color: Colors.white),
+        ),
         backgroundColor: kPrimaryColor,
         foregroundColor: Colors.white,
         actions: [
