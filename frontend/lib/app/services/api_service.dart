@@ -153,11 +153,12 @@ class ApiService {
 
   // List Endpoints
   Future<ListModel> createList(
+    String creatorGuid,
     String title,
     String type, {
     String? description,
   }) async {
-    final body = {'title': title, 'type': type};
+    final body = {'creatorGuid': creatorGuid, 'title': title, 'type': type};
     if (description != null) body['description'] = description;
     final response = await _postJson('/lists', body);
     if (response.statusCode == 201) {

@@ -37,6 +37,7 @@ class ListViewModel with ChangeNotifier {
   }
 
   Future<ListModel?> createList(
+    String creatorGuid,
     String title,
     ListType type, {
     String? description,
@@ -45,6 +46,7 @@ class ListViewModel with ChangeNotifier {
     _setErrorMessage(null);
     try {
       final newList = await _apiService.createList(
+        creatorGuid,
         title,
         type.toString().split('.').last,
         description: description,
