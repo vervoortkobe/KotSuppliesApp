@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kotsupplies/app/view_models/auth_view_model.dart';
 import 'package:kotsupplies/app/widgets/app_loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:kotsupplies/app/constants/app_constants.dart';
@@ -35,7 +36,9 @@ class CreateListScreenState extends State<CreateListScreen> {
     }
 
     final listViewModel = Provider.of<ListViewModel>(context, listen: false);
+    final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     final newList = await listViewModel.createList(
+      authViewModel.currentUser!.guid,
       _titleController.text,
       _selectedListType!,
       description: _descriptionController.text.isNotEmpty

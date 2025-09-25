@@ -6,6 +6,7 @@ enum ListType { imageCount, check }
 
 class ListModel {
   final String guid;
+  final String creatorGuid;
   final String title;
   final String? description;
   final String shareCode;
@@ -16,6 +17,7 @@ class ListModel {
 
   ListModel({
     required this.guid,
+    required this.creatorGuid,
     required this.title,
     this.description,
     required this.shareCode,
@@ -28,6 +30,7 @@ class ListModel {
   factory ListModel.fromJson(Map<String, dynamic> json) {
     return ListModel(
       guid: json['guid'],
+      creatorGuid: json['creatorGuid'],
       title: json['title'],
       description: json['description'],
       shareCode: json['shareCode'],
@@ -45,6 +48,7 @@ class ListModel {
   Map<String, dynamic> toJson() {
     return {
       'guid': guid,
+      'creatorGuid': creatorGuid,
       'title': title,
       'description': description,
       'shareCode': shareCode,
