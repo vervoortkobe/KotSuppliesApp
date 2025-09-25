@@ -166,7 +166,10 @@ class CategoryManagementScreenState extends State<CategoryManagementScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manage Categories', style: kHeadingStyle),
+        title: Text(
+          'Manage Categories',
+          style: kHeadingStyle.copyWith(color: Colors.white),
+        ),
         backgroundColor: kPrimaryColor,
         foregroundColor: Colors.white,
       ),

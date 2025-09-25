@@ -132,7 +132,10 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
         if (itemViewModel.isLoading) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Loading List...', style: kHeadingStyle),
+              title: Text(
+                'Loading List...',
+                style: kHeadingStyle.copyWith(color: Colors.white),
+              ),
               backgroundColor: kPrimaryColor,
               foregroundColor: Colors.white,
             ),
@@ -143,7 +146,10 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
         if (itemViewModel.errorMessage != null) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Error', style: kHeadingStyle),
+              title: Text(
+                'Error',
+                style: kHeadingStyle.copyWith(color: Colors.white),
+              ),
               backgroundColor: kErrorColor,
               foregroundColor: Colors.white,
             ),
@@ -163,7 +169,10 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
         if (list == null) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text('List Not Found', style: kHeadingStyle),
+              title: Text(
+                'List Not Found',
+                style: kHeadingStyle.copyWith(color: Colors.white),
+              ),
               backgroundColor: kPrimaryColor,
               foregroundColor: Colors.white,
             ),
@@ -184,7 +193,10 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            title: Text(list.title, style: kHeadingStyle),
+            title: Text(
+              list.title,
+              style: kHeadingStyle.copyWith(color: Colors.white),
+            ),
             backgroundColor: kPrimaryColor,
             foregroundColor: Colors.white,
             actions: [

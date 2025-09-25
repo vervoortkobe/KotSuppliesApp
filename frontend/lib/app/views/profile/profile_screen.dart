@@ -62,7 +62,10 @@ class ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Profile', style: kHeadingStyle),
+        title: Text(
+          'Edit Profile',
+          style: kHeadingStyle.copyWith(color: Colors.white),
+        ),
         backgroundColor: kPrimaryColor,
         foregroundColor: Colors.white,
       ),

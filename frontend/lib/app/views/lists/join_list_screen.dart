@@ -57,7 +57,10 @@ class JoinListScreenState extends State<JoinListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Join List', style: kHeadingStyle),
+        title: Text(
+          'Join List',
+          style: kHeadingStyle.copyWith(color: Colors.white),
+        ),
         backgroundColor: kPrimaryColor,
         foregroundColor: Colors.white,
       ),

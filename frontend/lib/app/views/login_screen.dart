@@ -43,7 +43,10 @@ class LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login', style: kHeadingStyle),
+        title: Text(
+          'Login',
+          style: kHeadingStyle.copyWith(color: Colors.white),
+        ),
         backgroundColor: kPrimaryColor,
         foregroundColor: Colors.white,
       ),
