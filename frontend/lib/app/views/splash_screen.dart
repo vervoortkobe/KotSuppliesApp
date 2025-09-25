@@ -49,7 +49,7 @@ class SplashScreenState extends State<SplashScreen> {
             const Icon(Icons.checklist, size: 100, color: Colors.white),
             const SizedBox(height: kDefaultPadding),
             Text(
-              'KOT Supplies',
+              'KotSupplies',
               style: kHeadingStyle.copyWith(color: Colors.white),
             ),
             const SizedBox(height: kLargePadding),
