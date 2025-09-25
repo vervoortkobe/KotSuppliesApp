@@ -22,19 +22,16 @@ export class ListsService {
     const creator = await this.userRepository.findOneBy({
       guid: createListDto.creatorGuid,
     });
-
     if (!creator) {
       throw new BadRequestException('Creator (user) not found');
     }
 
-    const list = new List();
+    let list = new List();
     list.title = createListDto.title;
     list.description = createListDto.description || '';
     list.guid = uuidv4();
     list.type = createListDto.type;
     list.shareCode = Math.random().toString(36).substring(2, 8);
-
-    list.users = [creator];
 
     if (createListDto.type === 'image_count') {
       const defaultCategory = new Category();
@@ -43,7 +40,10 @@ export class ListsService {
       list.categories = [defaultCategory];
     }
 
-    return this.listRepository.save(list);
+    const savedList = await this.listRepository.save(list);
+
+    savedList.users = [creator];
+    return this.listRepository.save(savedList);
   }
 
   async findAll() {

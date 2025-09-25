@@ -22,7 +22,6 @@ export class User {
   profileImageGuid: string;
 
   @ManyToMany(() => List, (list) => list.users)
-  @JoinTable()
   accessibleLists: List[];
 
   @OneToMany(() => Notification, (notification) => notification.user)
