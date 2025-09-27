@@ -82,14 +82,14 @@ class ItemFormScreenState extends State<ItemFormScreen> {
         await itemViewModel.createItem(
           widget.listGuid,
           _titleController.text,
-          amount: widget.listType == ListType.imageCount
+          amount: widget.listType == ListType.image_count
               ? int.tryParse(_amountController.text)
               : null,
           checked: widget.listType == ListType.check ? _checked : null,
-          categoryGuid: widget.listType == ListType.imageCount
+          categoryGuid: widget.listType == ListType.image_count
               ? _selectedCategoryGuid
               : null,
-          image: widget.listType == ListType.imageCount ? _pickedImage : null,
+          image: widget.listType == ListType.image_count ? _pickedImage : null,
         );
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -103,14 +103,14 @@ class ItemFormScreenState extends State<ItemFormScreen> {
           widget.listGuid,
           widget.item!,
           title: _titleController.text,
-          amount: widget.listType == ListType.imageCount
+          amount: widget.listType == ListType.image_count
               ? int.tryParse(_amountController.text)
               : null,
           checked: widget.listType == ListType.check ? _checked : null,
-          categoryGuid: widget.listType == ListType.imageCount
+          categoryGuid: widget.listType == ListType.image_count
               ? _selectedCategoryGuid
               : null,
-          image: widget.listType == ListType.imageCount ? _pickedImage : null,
+          image: widget.listType == ListType.image_count ? _pickedImage : null,
         );
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -160,7 +160,7 @@ class ItemFormScreenState extends State<ItemFormScreen> {
                 },
               ),
               const SizedBox(height: kDefaultPadding),
-              if (widget.listType == ListType.imageCount) ...[
+              if (widget.listType == ListType.image_count) ...[
                 TextFormField(
                   controller: _amountController,
                   decoration: InputDecoration(

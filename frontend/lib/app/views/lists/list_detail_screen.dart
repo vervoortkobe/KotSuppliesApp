@@ -200,7 +200,7 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
             backgroundColor: kPrimaryColor,
             foregroundColor: Colors.white,
             actions: [
-              if (list.type == ListType.imageCount)
+              if (list.type == ListType.image_count)
                 IconButton(
                   icon: const Icon(Icons.category),
                   tooltip: 'Manage Categories',
@@ -304,7 +304,7 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                         fontStyle: FontStyle.italic,
                       ),
                     ),
-                    if (list.type == ListType.imageCount &&
+                    if (list.type == ListType.image_count &&
                         list.categories != null &&
                         list.categories!.isNotEmpty)
                       Column(
@@ -367,7 +367,7 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                               padding: const EdgeInsets.all(kDefaultPadding),
                               child: Row(
                                 children: [
-                                  if (list.type == ListType.imageCount &&
+                                  if (list.type == ListType.image_count &&
                                       item.imageGuid != null)
                                     Padding(
                                       padding: const EdgeInsets.only(
@@ -416,7 +416,7 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                                       ],
                                     ),
                                   ),
-                                  if (list.type == ListType.imageCount)
+                                  if (list.type == ListType.image_count)
                                     Row(
                                       children: [
                                         IconButton(

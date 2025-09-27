@@ -211,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 kDefaultPadding,
                               ),
                               leading: Icon(
-                                list.type == ListType.imageCount
+                                list.type == ListType.image_count
                                     ? Icons.image_outlined
                                     : Icons.check_box,
                                 color: kPrimaryColor,

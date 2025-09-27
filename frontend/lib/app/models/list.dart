@@ -2,7 +2,7 @@ import 'package:kotsupplies/app/models/category.dart';
 import 'package:kotsupplies/app/models/item.dart';
 import 'package:kotsupplies/app/models/user.dart';
 
-enum ListType { imageCount, check }
+enum ListType { image_count, check }
 
 class ListModel {
   final String guid;

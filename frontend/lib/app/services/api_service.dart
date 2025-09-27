@@ -161,7 +161,7 @@ class ApiService {
     final body = {'creatorGuid': creatorGuid, 'title': title, 'type': type};
     if (description != null) body['description'] = description;
     final response = await _postJson('/lists', body);
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       return ListModel.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to create list: ${response.body}');
