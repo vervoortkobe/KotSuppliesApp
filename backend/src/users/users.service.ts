@@ -12,10 +12,6 @@ export class UsersService {
     @InjectRepository(Image) private imageRepository: Repository<Image>,
   ) {}
 
-  private getImageUrl(guid: string): string {
-    return `${process.env.API_URL}/images/${guid}`;
-  }
-
   async create(createUserDto: CreateUserDto, file?: Express.Multer.File) {
     const existingUser = await this.userRepository.findOneBy({
       username: createUserDto.username,
@@ -36,9 +32,7 @@ export class UsersService {
     const response: UserResponseDto = {
       guid: savedUser.guid,
       username: savedUser.username,
-      profileImageUrl: savedUser.profileImageGuid
-        ? this.getImageUrl(savedUser.profileImageGuid)
-        : undefined,
+      profileImageGuid: savedUser.profileImageGuid,
     };
     return response;
   }
@@ -72,9 +66,7 @@ export class UsersService {
     const response: UserResponseDto = {
       guid: savedUser.guid,
       username: savedUser.username,
-      profileImageUrl: savedUser.profileImageGuid
-        ? this.getImageUrl(savedUser.profileImageGuid)
-        : undefined,
+      profileImageGuid: savedUser.profileImageGuid,
     };
     return response;
   }
@@ -88,9 +80,7 @@ export class UsersService {
     const response: UserResponseDto = {
       guid: user.guid,
       username: user.username,
-      profileImageUrl: user.profileImageGuid
-        ? this.getImageUrl(user.profileImageGuid)
-        : undefined,
+      profileImageGuid: user.profileImageGuid,
     };
     return response;
   }
@@ -100,9 +90,7 @@ export class UsersService {
     return users.map((user) => ({
       guid: user.guid,
       username: user.username,
-      profileImageUrl: user.profileImageGuid
-        ? this.getImageUrl(user.profileImageGuid)
-        : undefined,
+      profileImageGuid: user.profileImageGuid,
     }));
   }
 
@@ -114,9 +102,7 @@ export class UsersService {
     return {
       guid: user.guid,
       username: user.username,
-      profileImageUrl: user.profileImageGuid
-        ? this.getImageUrl(user.profileImageGuid)
-        : undefined,
+      profileImageGuid: user.profileImageGuid,
     };
   }
 }

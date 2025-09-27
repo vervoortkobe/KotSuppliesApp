@@ -25,5 +25,5 @@ export class UserResponseDto {
 
   @IsString()
   @IsOptional()
-  profileImageUrl?: string;
+  profileImageGuid?: string;
 }

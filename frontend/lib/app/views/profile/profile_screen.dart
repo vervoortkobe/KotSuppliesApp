@@ -83,7 +83,10 @@ class ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 children: [
                   ProfileImagePicker(
-                    initialImageUrl: authViewModel.currentUser!.profileImageUrl,
+                    initialImageUrl:
+                        authViewModel.currentUser!.profileImageGuid != null
+                        ? '${kApiBaseUrl}images/${authViewModel.currentUser!.profileImageGuid}'
+                        : null,
                     onImagePicked: (image) {
                       setState(() {
                         _pickedImage = image;

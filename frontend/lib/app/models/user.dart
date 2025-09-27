@@ -3,13 +3,13 @@ import 'package:kotsupplies/app/models/list.dart';
 class User {
   final String guid;
   final String username;
-  final String? profileImageUrl;
+  final String? profileImageGuid;
   final List<ListModel>? accessibleLists;
 
   User({
     required this.guid,
     required this.username,
-    this.profileImageUrl,
+    this.profileImageGuid,
     this.accessibleLists,
   });
 
@@ -23,7 +23,7 @@ class User {
     return User(
       guid: json['guid'],
       username: json['username'],
-      profileImageUrl: json['profileImageUrl'],
+      profileImageGuid: json['profileImageGuid'],
       accessibleLists: lists,
     );
   }
@@ -32,7 +32,7 @@ class User {
     return {
       'guid': guid,
       'username': username,
-      'profileImageUrl': profileImageUrl,
+      'profileImageGuid': profileImageGuid,
       'accessibleLists': accessibleLists?.map((e) => e.toJson()).toList(),
     };
   }
