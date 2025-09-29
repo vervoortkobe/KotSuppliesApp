@@ -110,7 +110,7 @@ class ApiService {
 
   Future<User> login(String username) async {
     final response = await _postJson('/users/login', {'username': username});
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       return User.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to login: ${response.body}');
@@ -161,7 +161,7 @@ class ApiService {
     final body = {'creatorGuid': creatorGuid, 'title': title, 'type': type};
     if (description != null) body['description'] = description;
     final response = await _postJson('/lists', body);
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       return ListModel.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to create list: ${response.body}');
@@ -206,7 +206,7 @@ class ApiService {
     final response = await http.post(
       Uri.parse('$kApiBaseUrl/lists/$listGuid/add-user/$userGuid'),
     );
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       return ListModel.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to add user to list: ${response.body}');
@@ -217,7 +217,7 @@ class ApiService {
     final response = await http.post(
       Uri.parse('$kApiBaseUrl/lists/$listGuid/remove-user/$userGuid'),
     );
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       return ListModel.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to remove user from list: ${response.body}');
@@ -306,7 +306,7 @@ class ApiService {
     final response = await _postJson('/items/$listGuid/bulk', {
       'items': itemsData,
     });
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       return List<Map<String, dynamic>>.from(json.decode(response.body));
     } else {
       throw Exception('Failed to bulk update items: ${response.body}');
