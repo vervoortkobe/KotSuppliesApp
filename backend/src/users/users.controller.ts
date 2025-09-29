@@ -8,6 +8,7 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
+  HttpCode,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersService } from './users.service';
@@ -18,6 +19,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('create')
+  @HttpCode(201)
   @UseInterceptors(FileInterceptor('profileImage'))
   async create(
     @Body() createUserDto: CreateUserDto,
@@ -27,6 +29,7 @@ export class UsersController {
   }
 
   @Put(':guid')
+  @HttpCode(200)
   @UseInterceptors(FileInterceptor('profileImage'))
   async update(
     @Param('guid') guid: string,
@@ -37,6 +40,7 @@ export class UsersController {
   }
 
   @Post('login')
+  @HttpCode(200)
   async login(@Body() loginUserDto: LoginUserDto) {
     const user = await this.usersService.login(loginUserDto.username);
     if (!user) {
@@ -46,11 +50,13 @@ export class UsersController {
   }
 
   @Get()
+  @HttpCode(200)
   async findAll() {
     return this.usersService.findAll();
   }
 
   @Get(':guid')
+  @HttpCode(200)
   async findOne(@Param('guid') guid: string) {
     const user = await this.usersService.findOne(guid);
     if (!user) {

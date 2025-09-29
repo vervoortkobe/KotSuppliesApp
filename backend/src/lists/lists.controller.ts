@@ -7,6 +7,7 @@ import {
   Put,
   Delete,
   BadRequestException,
+  HttpCode,
 } from '@nestjs/common';
 import { ListsService } from './lists.service';
 import { CreateListDto, UpdateListDto } from './dto';
@@ -16,16 +17,19 @@ export class ListsController {
   constructor(private readonly listsService: ListsService) {}
 
   @Post()
+  @HttpCode(201)
   async create(@Body() createListDto: CreateListDto) {
     return this.listsService.create(createListDto);
   }
 
   @Get()
+  @HttpCode(200)
   async findAll() {
     return this.listsService.findAll();
   }
 
   @Get(':guid')
+  @HttpCode(200)
   async findOne(@Param('guid') guid: string) {
     const list = await this.listsService.findOne(guid);
     if (!list) {
@@ -35,6 +39,7 @@ export class ListsController {
   }
 
   @Put(':guid')
+  @HttpCode(200)
   async update(
     @Param('guid') guid: string,
     @Body() updateListDto: UpdateListDto,
@@ -43,11 +48,13 @@ export class ListsController {
   }
 
   @Delete(':guid')
+  @HttpCode(200)
   async delete(@Param('guid') guid: string) {
     return this.listsService.delete(guid);
   }
 
   @Post(':listGuid/add-user/:userGuid')
+  @HttpCode(200)
   async addUser(
     @Param('listGuid') listGuid: string,
     @Param('userGuid') userGuid: string,
@@ -56,6 +63,7 @@ export class ListsController {
   }
 
   @Post(':listGuid/remove-user/:userGuid')
+  @HttpCode(200)
   async removeUser(
     @Param('listGuid') listGuid: string,
     @Param('userGuid') userGuid: string,

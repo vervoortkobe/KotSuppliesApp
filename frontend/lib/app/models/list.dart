@@ -2,6 +2,7 @@ import 'package:kotsupplies/app/models/category.dart';
 import 'package:kotsupplies/app/models/item.dart';
 import 'package:kotsupplies/app/models/user.dart';
 
+// ignore: constant_identifier_names
 enum ListType { image_count, check }
 
 class ListModel {

@@ -85,7 +85,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                   ProfileImagePicker(
                     initialImageUrl:
                         authViewModel.currentUser!.profileImageGuid != null
-                        ? '${kApiBaseUrl}images/${authViewModel.currentUser!.profileImageGuid}'
+                        ? '$kApiBaseUrl/images/${authViewModel.currentUser!.profileImageGuid}'
                         : null,
                     onImagePicked: (image) {
                       setState(() {

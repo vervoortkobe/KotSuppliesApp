@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
+  HttpCode,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ItemsService } from './items.service';
@@ -19,6 +20,7 @@ export class ItemsController {
   constructor(private readonly itemsService: ItemsService) {}
 
   @Post(':listGuid')
+  @HttpCode(201)
   @UseInterceptors(FileInterceptor('image'))
   async create(
     @Param('listGuid') listGuid: string,
@@ -29,6 +31,7 @@ export class ItemsController {
   }
 
   @Get(':listGuid/:itemGuid')
+  @HttpCode(200)
   async findOne(
     @Param('listGuid') listGuid: string,
     @Param('itemGuid') itemGuid: string,
@@ -41,6 +44,7 @@ export class ItemsController {
   }
 
   @Put(':listGuid/:itemGuid')
+  @HttpCode(200)
   @UseInterceptors(FileInterceptor('image'))
   async update(
     @Param('listGuid') listGuid: string,
@@ -52,6 +56,7 @@ export class ItemsController {
   }
 
   @Delete(':listGuid/:itemGuid')
+  @HttpCode(200)
   async delete(
     @Param('listGuid') listGuid: string,
     @Param('itemGuid') itemGuid: string,
@@ -60,6 +65,7 @@ export class ItemsController {
   }
 
   @Post(':listGuid/bulk')
+  @HttpCode(200)
   async bulkOperation(
     @Param('listGuid') listGuid: string,
     @Body() bulkItemDto: BulkItemDto,
