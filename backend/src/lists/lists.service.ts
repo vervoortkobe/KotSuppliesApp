@@ -114,22 +114,15 @@ export class ListsService {
       throw new BadRequestException('Only the creator can delete this list');
     }
 
-    // Delete all related entities in the correct order to avoid foreign key constraints
-
-    // 1. Delete notifications referencing this list
     await this.notificationRepository.delete({ list: { guid } });
 
-    // 2. Delete items first (they reference both list and categories)
     await this.itemRepository.delete({ list: { guid } });
 
-    // 3. Delete categories (they reference the list)
     await this.categoryRepository.delete({ list: { guid } });
 
-    // 4. Clear the many-to-many relationship with users
     list.users = [];
     await this.listRepository.save(list);
 
-    // 5. Finally delete the list
     await this.listRepository.delete({ guid });
 
     return { message: 'List deleted' };
