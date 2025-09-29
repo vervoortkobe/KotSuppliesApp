@@ -88,15 +88,29 @@ class ListViewModel with ChangeNotifier {
     }
   }
 
-  Future<void> deleteList(String listGuid) async {
+  Future<void> deleteList(String listGuid, String userGuid) async {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      await _apiService.deleteList(listGuid);
+      await _apiService.deleteList(listGuid, userGuid);
       _userLists.removeWhere((list) => list.guid == listGuid);
       notifyListeners();
     } catch (e) {
       _setErrorMessage('Failed to delete list: $e');
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  Future<void> leaveList(String listGuid, String userGuid) async {
+    _setLoading(true);
+    _setErrorMessage(null);
+    try {
+      await _apiService.leaveList(listGuid, userGuid);
+      _userLists.removeWhere((list) => list.guid == listGuid);
+      notifyListeners();
+    } catch (e) {
+      _setErrorMessage('Failed to leave list: $e');
     } finally {
       _setLoading(false);
     }

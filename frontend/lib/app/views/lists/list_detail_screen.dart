@@ -6,6 +6,7 @@ import 'package:kotsupplies/app/models/item.dart';
 import 'package:kotsupplies/app/models/list.dart';
 import 'package:kotsupplies/app/services/api_service.dart';
 import 'package:kotsupplies/app/view_models/item_view_model.dart';
+import 'package:kotsupplies/app/view_models/auth_view_model.dart';
 import 'package:kotsupplies/app/widgets/app_loading_indicator.dart';
 import 'package:kotsupplies/app/views/categories/category_management_screen.dart';
 import 'package:kotsupplies/app/views/items/item_form_screen.dart';
@@ -115,7 +116,6 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
       ),
     );
     if (result == true) {
-      // Item created/updated, refresh list
       Provider.of<ItemViewModel>(
         context,
         listen: false,
@@ -125,9 +125,10 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ItemViewModel>(
-      builder: (context, itemViewModel, child) {
+    return Consumer2<ItemViewModel, AuthViewModel>(
+      builder: (context, itemViewModel, authViewModel, child) {
         final list = itemViewModel.currentList;
+        final currentUser = authViewModel.currentUser;
 
         if (itemViewModel.isLoading) {
           return Scaffold(
@@ -231,57 +232,154 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                   );
                 },
               ),
-              IconButton(
-                icon: const Icon(Icons.delete),
-                tooltip: 'Delete List',
-                onPressed: () async {
-                  final confirm = await showDialog<bool>(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: const Text('Confirm Delete'),
-                      content: Text(
-                        'Are you sure you want to delete "${list.title}"? This cannot be undone.',
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(ctx).pop(false),
-                          child: const Text('Cancel'),
+              if (currentUser != null) ...[
+                IconButton(
+                  icon: const Icon(Icons.info),
+                  tooltip: 'Debug Info',
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: const Text('Debug Info'),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Current User: ${currentUser.guid}'),
+                            Text('List Creator: ${list.creatorGuid}'),
+                            Text(
+                              'Are Equal: ${list.creatorGuid == currentUser.guid}',
+                            ),
+                            Text(
+                              'Current User Username: ${currentUser.username}',
+                            ),
+                          ],
                         ),
-                        ElevatedButton(
-                          onPressed: () => Navigator.of(ctx).pop(true),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: kErrorColor,
-                            foregroundColor: Colors.white,
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(ctx).pop(),
+                            child: const Text('OK'),
                           ),
-                          child: const Text('Delete'),
-                        ),
-                      ],
-                    ),
-                  );
-                  if (confirm == true) {
-                    try {
-                      await Provider.of<ListViewModel>(
-                        context,
-                        listen: false,
-                      ).deleteList(list.guid);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('List "${list.title}" deleted.'),
-                          backgroundColor: kSuccessColor,
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                // Creator gets delete button
+                if (list.creatorGuid == currentUser.guid)
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    tooltip: 'Delete List',
+                    onPressed: () async {
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Confirm Delete'),
+                          content: Text(
+                            'Are you sure you want to delete "${list.title}"? This cannot be undone.',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(ctx).pop(false),
+                              child: const Text('Cancel'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => Navigator.of(ctx).pop(true),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: kErrorColor,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: const Text('Delete'),
+                            ),
+                          ],
                         ),
                       );
-                      Navigator.of(context).pop(true); // Pop to home screen
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Failed to delete list: $e'),
-                          backgroundColor: kErrorColor,
+                      if (confirm == true) {
+                        try {
+                          await Provider.of<ListViewModel>(
+                            context,
+                            listen: false,
+                          ).deleteList(list.guid, currentUser.guid);
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('List "${list.title}" deleted.'),
+                                backgroundColor: kSuccessColor,
+                              ),
+                            );
+                            Navigator.of(context).pop(true);
+                          }
+                        } catch (e) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Failed to delete list: $e'),
+                                backgroundColor: kErrorColor,
+                              ),
+                            );
+                          }
+                        }
+                      }
+                    },
+                  ),
+                // Non-creator gets leave button
+                if (list.creatorGuid != currentUser.guid)
+                  IconButton(
+                    icon: const Icon(Icons.exit_to_app),
+                    tooltip: 'Leave List',
+                    onPressed: () async {
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Confirm Leave'),
+                          content: Text(
+                            'Are you sure you want to leave "${list.title}"?',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(ctx).pop(false),
+                              child: const Text('Cancel'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => Navigator.of(ctx).pop(true),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: kErrorColor,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: const Text('Leave'),
+                            ),
+                          ],
                         ),
                       );
-                    }
-                  }
-                },
-              ),
+                      if (confirm == true) {
+                        try {
+                          await Provider.of<ListViewModel>(
+                            context,
+                            listen: false,
+                          ).leaveList(list.guid, currentUser.guid);
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Left list "${list.title}".'),
+                                backgroundColor: kSuccessColor,
+                              ),
+                            );
+                            Navigator.of(context).pop(true);
+                          }
+                        } catch (e) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Failed to leave list: $e'),
+                                backgroundColor: kErrorColor,
+                              ),
+                            );
+                          }
+                        }
+                      }
+                    },
+                  ),
+              ],
             ],
           ),
           body: Column(

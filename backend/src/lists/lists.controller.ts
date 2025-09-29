@@ -57,10 +57,10 @@ export class ListsController {
     return this.listsService.update(guid, updateListDto);
   }
 
-  @Delete(':guid')
+  @Delete(':guid/:userGuid')
   @HttpCode(200)
-  async delete(@Param('guid') guid: string) {
-    return this.listsService.delete(guid);
+  async delete(@Param('guid') guid: string, @Param('userGuid') userGuid: string) {
+    return this.listsService.delete(guid, userGuid);
   }
 
   @Post(':listGuid/add-user/:userGuid')
@@ -79,5 +79,14 @@ export class ListsController {
     @Param('userGuid') userGuid: string,
   ) {
     return this.listsService.removeUser(listGuid, userGuid);
+  }
+
+  @Post(':listGuid/leave/:userGuid')
+  @HttpCode(200)
+  async leaveList(
+    @Param('listGuid') listGuid: string,
+    @Param('userGuid') userGuid: string,
+  ) {
+    return this.listsService.leaveList(listGuid, userGuid);
   }
 }

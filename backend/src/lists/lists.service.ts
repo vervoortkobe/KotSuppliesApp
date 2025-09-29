@@ -6,6 +6,7 @@ import { List } from '../entities/list.entity';
 import { User } from '../entities/user.entity';
 import { Category } from '../entities/category.entity';
 import { Item } from '../entities/item.entity';
+import { Notification } from '../entities/notification.entity';
 import { CreateListDto, UpdateListDto } from './dto';
 import { NotificationsService } from '../notifications/notifications.service';
 
@@ -17,6 +18,8 @@ export class ListsService {
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
     @InjectRepository(Item) private itemRepository: Repository<Item>,
+    @InjectRepository(Notification)
+    private notificationRepository: Repository<Notification>,
     private notificationsService: NotificationsService,
   ) {}
 
@@ -41,6 +44,7 @@ export class ListsService {
     list.title = createListDto.title;
     list.description = createListDto.description || '';
     list.guid = uuidv4();
+    list.creatorGuid = createListDto.creatorGuid;
     list.type = createListDto.type as 'image_count' | 'check';
     list.shareCode = Math.random().toString(36).substring(2, 8);
 
@@ -95,7 +99,7 @@ export class ListsService {
     return this.listRepository.save(list);
   }
 
-  async delete(guid: string) {
+  async delete(guid: string, userGuid: string) {
     const list = await this.listRepository.findOne({
       where: { guid },
       relations: ['users', 'categories', 'items'],
@@ -105,19 +109,28 @@ export class ListsService {
       throw new BadRequestException('List not found');
     }
 
-    if (list.items && list.items.length > 0) {
-      for (const item of list.items) {
-        await this.itemRepository.delete(item.guid);
-      }
+    // Check if user is the creator
+    if (list.creatorGuid !== userGuid) {
+      throw new BadRequestException('Only the creator can delete this list');
     }
 
-    if (list.categories && list.categories.length > 0) {
-      for (const category of list.categories) {
-        await this.categoryRepository.delete(category.guid);
-      }
-    }
+    // Delete all related entities in the correct order to avoid foreign key constraints
 
-    await this.listRepository.delete(guid);
+    // 1. Delete notifications referencing this list
+    await this.notificationRepository.delete({ list: { guid } });
+
+    // 2. Delete items first (they reference both list and categories)
+    await this.itemRepository.delete({ list: { guid } });
+
+    // 3. Delete categories (they reference the list)
+    await this.categoryRepository.delete({ list: { guid } });
+
+    // 4. Clear the many-to-many relationship with users
+    list.users = [];
+    await this.listRepository.save(list);
+
+    // 5. Finally delete the list
+    await this.listRepository.delete({ guid });
 
     return { message: 'List deleted' };
   }
@@ -155,5 +168,35 @@ export class ListsService {
       `User ${user.username} left list ${list.title}`,
     );
     return list;
+  }
+
+  async leaveList(listGuid: string, userGuid: string) {
+    const list = await this.findOne(listGuid);
+    const user = await this.userRepository.findOneBy({ guid: userGuid });
+    if (!list || !user) {
+      throw new BadRequestException('List or user not found');
+    }
+
+    // Check if user is the creator
+    if (list.creatorGuid === userGuid) {
+      throw new BadRequestException(
+        'Creator cannot leave the list. Delete the list instead.',
+      );
+    }
+
+    // Check if user is actually in the list
+    const userInList = list.users.find((u) => u.guid === userGuid);
+    if (!userInList) {
+      throw new BadRequestException('User is not a member of this list');
+    }
+
+    list.users = list.users.filter((u) => u.guid !== userGuid);
+    await this.listRepository.save(list);
+    await this.notificationsService.notifyUsers(
+      list,
+      user,
+      `User ${user.username} left list ${list.title}`,
+    );
+    return { message: 'Successfully left the list' };
   }
 }

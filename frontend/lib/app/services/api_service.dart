@@ -204,12 +204,21 @@ class ApiService {
     }
   }
 
-  Future<void> deleteList(String listGuid) async {
+  Future<void> deleteList(String listGuid, String userGuid) async {
     final response = await http.delete(
-      Uri.parse('$kApiBaseUrl/lists/$listGuid'),
+      Uri.parse('$kApiBaseUrl/lists/$listGuid/$userGuid'),
     );
     if (response.statusCode != 200) {
       throw Exception('Failed to delete list: ${response.body}');
+    }
+  }
+
+  Future<void> leaveList(String listGuid, String userGuid) async {
+    final response = await http.post(
+      Uri.parse('$kApiBaseUrl/lists/$listGuid/leave/$userGuid'),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to leave list: ${response.body}');
     }
   }
 

@@ -25,6 +25,9 @@ export class List {
   @Column({ length: 6 })
   shareCode: string;
 
+  @Column()
+  creatorGuid: string;
+
   @Column({
     type: 'varchar',
     length: 20,
