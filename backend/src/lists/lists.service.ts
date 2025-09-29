@@ -44,21 +44,17 @@ export class ListsService {
     list.type = createListDto.type as 'image_count' | 'check';
     list.shareCode = Math.random().toString(36).substring(2, 8);
 
-    // First save the list without categories
     const savedList = await this.listRepository.save(list);
 
-    // Then create the default category for image_count lists
     if (createListDto.type === 'image_count') {
       const defaultCategory = new Category();
-      defaultCategory.guid = uuidv4(); // Explicitly set the GUID
+      defaultCategory.guid = uuidv4();
       defaultCategory.name = 'uncategorized';
-      defaultCategory.list = savedList; // Reference the saved list
+      defaultCategory.list = savedList;
 
-      // Save the category separately
       await this.categoryRepository.save(defaultCategory);
     }
 
-    // Add the creator to the users and save again
     savedList.users = [creator];
     const finalList = await this.listRepository.save(savedList);
 
@@ -93,7 +89,6 @@ export class ListsService {
   }
 
   async delete(guid: string) {
-    // Use a simple approach without transactions to avoid cascade issues
     const list = await this.listRepository.findOne({
       where: { guid },
       relations: ['users', 'categories', 'items'],
@@ -103,21 +98,18 @@ export class ListsService {
       throw new BadRequestException('List not found');
     }
 
-    // Delete items one by one
     if (list.items && list.items.length > 0) {
       for (const item of list.items) {
         await this.itemRepository.delete(item.guid);
       }
     }
 
-    // Delete categories one by one
     if (list.categories && list.categories.length > 0) {
       for (const category of list.categories) {
         await this.categoryRepository.delete(category.guid);
       }
     }
 
-    // Remove user relationships by deleting the list (this will clear the join table)
     await this.listRepository.delete(guid);
 
     return { message: 'List deleted' };
