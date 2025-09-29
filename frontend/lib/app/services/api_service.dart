@@ -177,6 +177,17 @@ class ApiService {
     }
   }
 
+  Future<ListModel> getListByShareCode(String shareCode) async {
+    final response = await http.get(
+      Uri.parse('$kApiBaseUrl/lists/share/$shareCode'),
+    );
+    if (response.statusCode == 200) {
+      return ListModel.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load list by share code: ${response.body}');
+    }
+  }
+
   Future<ListModel> updateList(
     String listGuid, {
     String? title,

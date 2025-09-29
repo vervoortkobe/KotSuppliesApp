@@ -78,6 +78,13 @@ export class ListsService {
     });
   }
 
+  async findByShareCode(shareCode: string) {
+    return this.listRepository.findOne({
+      where: { shareCode },
+      relations: ['users', 'categories', 'items', 'items.category'],
+    });
+  }
+
   async update(guid: string, updateListDto: UpdateListDto) {
     const list = await this.findOne(guid);
     if (!list) {

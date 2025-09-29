@@ -102,17 +102,17 @@ class ListViewModel with ChangeNotifier {
     }
   }
 
-  Future<bool> joinList(String shareCode, String userGuid) async {
+  Future<ListModel?> joinList(String shareCode, String userGuid) async {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      ListModel listToJoin = await _apiService.getListByGuid(shareCode);
+      ListModel listToJoin = await _apiService.getListByShareCode(shareCode);
       await _apiService.addListUser(listToJoin.guid, userGuid);
       await fetchUserLists(userGuid);
-      return true;
+      return listToJoin; // Return the joined list for navigation
     } catch (e) {
       _setErrorMessage('Failed to join list: $e');
-      return false;
+      return null;
     } finally {
       _setLoading(false);
     }

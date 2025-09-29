@@ -38,6 +38,16 @@ export class ListsController {
     return list;
   }
 
+  @Get('share/:shareCode')
+  @HttpCode(200)
+  async findByShareCode(@Param('shareCode') shareCode: string) {
+    const list = await this.listsService.findByShareCode(shareCode);
+    if (!list) {
+      throw new BadRequestException('List not found with provided share code');
+    }
+    return list;
+  }
+
   @Put(':guid')
   @HttpCode(200)
   async update(
