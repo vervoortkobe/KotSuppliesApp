@@ -51,8 +51,9 @@ class ListViewModel with ChangeNotifier {
         type.toString().split('.').last,
         description: description,
       );
-      _userLists.add(newList);
-      notifyListeners();
+
+      await fetchUserLists(creatorGuid);
+
       return newList;
     } catch (e) {
       _setErrorMessage('Failed to create list: $e');

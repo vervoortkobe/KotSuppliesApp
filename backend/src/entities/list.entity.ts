@@ -25,7 +25,11 @@ export class List {
   @Column({ length: 6 })
   shareCode: string;
 
-  @Column({ enum: ['image_count', 'check'] })
+  @Column({
+    type: 'varchar',
+    length: 20,
+    nullable: false,
+  })
   type: 'image_count' | 'check';
 
   @ManyToMany(() => User, (user) => user.accessibleLists)

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // API Base URL
-const String kApiBaseUrl = 'https://2a30ee193c43.ngrok-free.app';
+const String kApiBaseUrl = 'https://b0050d76527a.ngrok-free.app';
 
 // Paddings
 const double kDefaultPadding = 16.0;

@@ -19,6 +19,15 @@ export class ListsService {
   ) {}
 
   async create(createListDto: CreateListDto) {
+    if (
+      !createListDto.type ||
+      !['image_count', 'check'].includes(createListDto.type)
+    ) {
+      throw new BadRequestException(
+        'Invalid list type. Must be either "image_count" or "check"',
+      );
+    }
+
     const creator = await this.userRepository.findOneBy({
       guid: createListDto.creatorGuid,
     });
@@ -30,7 +39,7 @@ export class ListsService {
     list.title = createListDto.title;
     list.description = createListDto.description || '';
     list.guid = uuidv4();
-    list.type = createListDto.type;
+    list.type = createListDto.type as 'image_count' | 'check';
     list.shareCode = Math.random().toString(36).substring(2, 8);
 
     if (createListDto.type === 'image_count') {
@@ -43,7 +52,13 @@ export class ListsService {
     const savedList = await this.listRepository.save(list);
 
     savedList.users = [creator];
-    return this.listRepository.save(savedList);
+    const finalList = await this.listRepository.save(savedList);
+
+    if (!finalList.type) {
+      finalList.type = createListDto.type as 'image_count' | 'check';
+    }
+
+    return finalList;
   }
 
   async findAll() {
