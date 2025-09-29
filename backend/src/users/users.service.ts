@@ -95,7 +95,15 @@ export class UsersService {
   }
 
   async findOne(guid: string): Promise<UserResponseDto> {
-    const user = await this.userRepository.findOneBy({ guid });
+    const user = await this.userRepository.findOne({
+      where: { guid },
+      relations: [
+        'accessibleLists',
+        'accessibleLists.users',
+        'accessibleLists.categories',
+        'accessibleLists.items',
+      ],
+    });
     if (!user) {
       throw new BadRequestException('User not found');
     }
@@ -103,6 +111,7 @@ export class UsersService {
       guid: user.guid,
       username: user.username,
       profileImageGuid: user.profileImageGuid,
+      accessibleLists: user.accessibleLists,
     };
   }
 }

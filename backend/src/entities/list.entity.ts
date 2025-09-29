@@ -36,9 +36,15 @@ export class List {
   @JoinTable()
   users: User[];
 
-  @OneToMany(() => Category, (category) => category.list, { cascade: true })
+  @OneToMany(() => Category, (category) => category.list, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   categories: Category[];
 
-  @OneToMany(() => Item, (item) => item.list, { cascade: true })
+  @OneToMany(() => Item, (item) => item.list, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   items: Item[];
 }
