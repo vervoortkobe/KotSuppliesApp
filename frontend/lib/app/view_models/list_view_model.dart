@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kotsupplies/app/models/list.dart';
-import 'package:kotsupplies/app/services/api_service.dart';
+import 'package:kotsupplies/app/services/api_services.dart';
 
 class ListViewModel with ChangeNotifier {
-  final ApiService _apiService = ApiService();
-
   List<ListModel> _userLists = [];
   bool _isLoading = false;
   String? _errorMessage;
@@ -27,7 +25,7 @@ class ListViewModel with ChangeNotifier {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      final user = await _apiService.getUserByGuid(userGuid);
+      final user = await apiServices.users.getUserByGuid(userGuid);
       _userLists = user.accessibleLists ?? [];
     } catch (e) {
       _setErrorMessage('Failed to load lists: $e');
@@ -45,7 +43,7 @@ class ListViewModel with ChangeNotifier {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      final newList = await _apiService.createList(
+      final newList = await apiServices.lists.createList(
         creatorGuid,
         title,
         type.toString().split('.').last,
@@ -71,7 +69,7 @@ class ListViewModel with ChangeNotifier {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      final updatedList = await _apiService.updateList(
+      final updatedList = await apiServices.lists.updateList(
         listGuid,
         title: title,
         description: description,
@@ -92,7 +90,7 @@ class ListViewModel with ChangeNotifier {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      await _apiService.deleteList(listGuid, userGuid);
+      await apiServices.lists.deleteList(listGuid, userGuid);
       _userLists.removeWhere((list) => list.guid == listGuid);
       notifyListeners();
     } catch (e) {
@@ -106,7 +104,7 @@ class ListViewModel with ChangeNotifier {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      await _apiService.leaveList(listGuid, userGuid);
+      await apiServices.lists.leaveList(listGuid, userGuid);
       _userLists.removeWhere((list) => list.guid == listGuid);
       notifyListeners();
     } catch (e) {
@@ -120,8 +118,10 @@ class ListViewModel with ChangeNotifier {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      ListModel listToJoin = await _apiService.getListByShareCode(shareCode);
-      await _apiService.addListUser(listToJoin.guid, userGuid);
+      ListModel listToJoin = await apiServices.lists.getListByShareCode(
+        shareCode,
+      );
+      await apiServices.lists.addListUser(listToJoin.guid, userGuid);
       await fetchUserLists(userGuid);
       return listToJoin; // Return the joined list for navigation
     } catch (e) {

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kotsupplies/app/widgets/app_loading_indicator.dart';
 import 'package:provider/provider.dart';
-import 'package:kotsupplies/app/services/api_service.dart';
+import 'package:kotsupplies/app/services/api_services.dart';
 import 'package:kotsupplies/app/constants/app_constants.dart';
 import 'package:kotsupplies/app/models/category.dart';
 import 'package:kotsupplies/app/models/item.dart';
@@ -13,8 +13,8 @@ import 'package:kotsupplies/app/view_models/item_view_model.dart';
 class ItemFormScreen extends StatefulWidget {
   final String listGuid;
   final ListType listType;
-  final Item? item; // For editing
-  final List<Category>? categories; // For image_count lists
+  final Item? item;
+  final List<Category>? categories;
 
   const ItemFormScreen({
     super.key,
@@ -222,7 +222,7 @@ class ItemFormScreenState extends State<ItemFormScreen> {
                                         widget.item!.imageGuid!.isNotEmpty
                                     ? DecorationImage(
                                         image: NetworkImage(
-                                          ApiService().getImageUrl(
+                                          apiServices.images.getImageUrl(
                                             widget.item!.imageGuid!,
                                           ),
                                         ),

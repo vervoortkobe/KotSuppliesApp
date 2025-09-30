@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kotsupplies/app/models/notification.dart';
-import 'package:kotsupplies/app/services/api_service.dart';
+import 'package:kotsupplies/app/services/api_services.dart';
 
 class NotificationViewModel with ChangeNotifier {
-  final ApiService _apiService = ApiService();
-
   List<AppNotification> _notifications = [];
   bool _isLoading = false;
   String? _errorMessage;
@@ -27,7 +25,9 @@ class NotificationViewModel with ChangeNotifier {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      _notifications = await _apiService.getNotificationsForUser(userGuid);
+      _notifications = await apiServices.notifications.getNotificationsForUser(
+        userGuid,
+      );
     } catch (e) {
       _setErrorMessage('Failed to load notifications: $e');
     } finally {

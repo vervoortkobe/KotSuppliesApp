@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:kotsupplies/app/constants/app_constants.dart';
 import 'package:kotsupplies/app/models/item.dart';
 import 'package:kotsupplies/app/models/list.dart';
-import 'package:kotsupplies/app/services/api_service.dart';
+import 'package:kotsupplies/app/services/api_services.dart';
 import 'package:kotsupplies/app/view_models/item_view_model.dart';
 import 'package:kotsupplies/app/view_models/auth_view_model.dart';
 import 'package:kotsupplies/app/widgets/app_loading_indicator.dart';
@@ -474,7 +474,7 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                                       child: ClipRRect(
                                         borderRadius: kDefaultBorderRadius,
                                         child: Image.network(
-                                          ApiService().getImageUrl(
+                                          apiServices.images.getImageUrl(
                                             item.imageGuid!,
                                           ),
                                           width: 60,
