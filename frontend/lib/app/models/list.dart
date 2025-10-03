@@ -2,7 +2,8 @@ import 'package:kotsupplies/app/models/category.dart';
 import 'package:kotsupplies/app/models/item.dart';
 import 'package:kotsupplies/app/models/user.dart';
 
-enum ListType { imageCount, check }
+// ignore: constant_identifier_names
+enum ListType { image_count, check }
 
 class ListModel {
   final String guid;
@@ -28,15 +29,26 @@ class ListModel {
   });
 
   factory ListModel.fromJson(Map<String, dynamic> json) {
+    ListType getTypeFromString(String? typeString) {
+      if (typeString == null) return ListType.image_count;
+
+      switch (typeString) {
+        case 'image_count':
+          return ListType.image_count;
+        case 'check':
+          return ListType.check;
+        default:
+          return ListType.image_count;
+      }
+    }
+
     return ListModel(
-      guid: json['guid'],
-      creatorGuid: json['creatorGuid'],
-      title: json['title'],
+      guid: json['guid'] ?? '',
+      creatorGuid: json['creatorGuid'] ?? '',
+      title: json['title'] ?? '',
       description: json['description'],
-      shareCode: json['shareCode'],
-      type: ListType.values.firstWhere(
-        (e) => e.toString().split('.').last == json['type'],
-      ),
+      shareCode: json['shareCode'] ?? '',
+      type: getTypeFromString(json['type']),
       users: (json['users'] as List?)?.map((u) => User.fromJson(u)).toList(),
       categories: (json['categories'] as List?)
           ?.map((c) => Category.fromJson(c))

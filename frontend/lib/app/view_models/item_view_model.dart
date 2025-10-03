@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:kotsupplies/app/models/category.dart';
 import 'package:kotsupplies/app/models/item.dart';
 import 'package:kotsupplies/app/models/list.dart';
-import 'package:kotsupplies/app/services/api_service.dart';
+import 'package:kotsupplies/app/services/api_services.dart';
 
 class ItemViewModel with ChangeNotifier {
-  final ApiService _apiService = ApiService();
-
   ListModel? _currentList;
   bool _isLoading = false;
   String? _errorMessage;
@@ -30,7 +28,7 @@ class ItemViewModel with ChangeNotifier {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      _currentList = await _apiService.getListByGuid(listGuid);
+      _currentList = await apiServices.lists.getListByGuid(listGuid);
     } catch (e) {
       _setErrorMessage('Failed to load list details: $e');
     } finally {
@@ -49,7 +47,7 @@ class ItemViewModel with ChangeNotifier {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      final newItem = await _apiService.createItem(
+      final newItem = await apiServices.items.createItem(
         listGuid,
         title,
         amount: amount,
@@ -57,7 +55,7 @@ class ItemViewModel with ChangeNotifier {
         categoryGuid: categoryGuid,
         image: image,
       );
-      await fetchListDetails(listGuid);
+      // Don't call fetchListDetails here - let the calling screen handle the refresh
       return newItem;
     } catch (e) {
       _setErrorMessage('Failed to create item: $e');
@@ -79,7 +77,7 @@ class ItemViewModel with ChangeNotifier {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      await _apiService.updateItem(
+      await apiServices.items.updateItem(
         listGuid,
         item.guid,
         title: title,
@@ -100,7 +98,7 @@ class ItemViewModel with ChangeNotifier {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      await _apiService.deleteItem(listGuid, itemGuid);
+      await apiServices.items.deleteItem(listGuid, itemGuid);
       await fetchListDetails(listGuid);
     } catch (e) {
       _setErrorMessage('Failed to delete item: $e');
@@ -113,7 +111,10 @@ class ItemViewModel with ChangeNotifier {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      final newCategory = await _apiService.createCategory(listGuid, name);
+      final newCategory = await apiServices.categories.createCategory(
+        listGuid,
+        name,
+      );
       await fetchListDetails(listGuid);
       return newCategory;
     } catch (e) {
@@ -132,7 +133,7 @@ class ItemViewModel with ChangeNotifier {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      await _apiService.updateCategory(listGuid, categoryGuid, name);
+      await apiServices.categories.updateCategory(listGuid, categoryGuid, name);
       await fetchListDetails(listGuid);
     } catch (e) {
       _setErrorMessage('Failed to update category: $e');
@@ -145,7 +146,7 @@ class ItemViewModel with ChangeNotifier {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      await _apiService.deleteCategory(listGuid, categoryGuid);
+      await apiServices.categories.deleteCategory(listGuid, categoryGuid);
       await fetchListDetails(listGuid);
     } catch (e) {
       _setErrorMessage('Failed to delete category: $e');

@@ -169,7 +169,75 @@ class _HomeScreenState extends State<HomeScreen> {
         listViewModel.isLoading
             ? const Expanded(child: AppLoadingIndicator())
             : listViewModel.errorMessage != null
-            ? Text(listViewModel.errorMessage!, style: kErrorTextStyle)
+            ? Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
+                        ),
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(kDefaultPadding),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  size: 64,
+                                  color: kErrorColor,
+                                ),
+                                const SizedBox(height: kDefaultPadding),
+                                Text(
+                                  'Oops! Something went wrong',
+                                  style: kSubtitleStyle.copyWith(
+                                    color: kErrorColor,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: kSmallPadding),
+                                Text(
+                                  listViewModel.errorMessage!,
+                                  style: kBodyTextStyle.copyWith(
+                                    color: Colors.grey.shade600,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: kLargePadding),
+                                ElevatedButton.icon(
+                                  onPressed: () => _loadInitialData(),
+                                  icon: const Icon(Icons.refresh),
+                                  label: const Text('Try Again'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: kPrimaryColor,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: kLargePadding,
+                                      vertical: kDefaultPadding,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: kDefaultBorderRadius,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: kDefaultPadding),
+                                Text(
+                                  'Pull down to refresh',
+                                  style: kSmallTextStyle.copyWith(
+                                    color: Colors.grey.shade500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              )
             : Expanded(
                 child: listViewModel.userLists.isEmpty
                     ? LayoutBuilder(
@@ -211,7 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 kDefaultPadding,
                               ),
                               leading: Icon(
-                                list.type == ListType.imageCount
+                                list.type == ListType.image_count
                                     ? Icons.image_outlined
                                     : Icons.check_box,
                                 color: kPrimaryColor,

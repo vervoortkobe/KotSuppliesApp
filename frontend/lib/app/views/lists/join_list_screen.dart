@@ -3,6 +3,8 @@ import 'package:kotsupplies/app/widgets/app_loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:kotsupplies/app/constants/app_constants.dart';
 import 'package:kotsupplies/app/view_models/list_view_model.dart';
+import 'package:kotsupplies/app/views/lists/list_detail_screen.dart';
+import 'package:kotsupplies/app/models/list.dart';
 
 class JoinListScreen extends StatefulWidget {
   final String userGuid;
@@ -29,20 +31,25 @@ class JoinListScreenState extends State<JoinListScreen> {
     }
 
     final listViewModel = Provider.of<ListViewModel>(context, listen: false);
-    bool success = await listViewModel.joinList(
+    ListModel? joinedList = await listViewModel.joinList(
       _shareCodeController.text,
       widget.userGuid,
     );
 
-    if (success) {
+    if (joinedList != null) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Joined list successfully!'),
+          SnackBar(
+            content: Text('Joined list "${joinedList.title}" successfully!'),
             backgroundColor: kSuccessColor,
           ),
         );
-        Navigator.of(context).pop(true); // Pop with true to indicate success
+        // Navigate to the joined list and remove join screen from stack
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => ListDetailScreen(listGuid: joinedList.guid),
+          ),
+        );
       }
     } else {
       if (mounted) {
@@ -72,7 +79,7 @@ class JoinListScreenState extends State<JoinListScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Enter the List GUID (or Share Code, if your API supports it) to join an existing list.',
+                'Enter the Share Code of an existing list to join it and get access.',
                 style: kBodyTextStyle.copyWith(color: Colors.grey.shade700),
                 textAlign: TextAlign.center,
               ),
@@ -80,14 +87,19 @@ class JoinListScreenState extends State<JoinListScreen> {
               TextFormField(
                 controller: _shareCodeController,
                 decoration: InputDecoration(
-                  labelText: 'List GUID / Share Code',
+                  labelText: 'Share Code',
                   border: kDefaultInputBorder,
                   focusedBorder: kFocusedInputBorder,
                   prefixIcon: const Icon(Icons.qr_code),
+                  helperText: 'Share codes are 6-character codes like "abc123"',
                 ),
+                textCapitalization: TextCapitalization.none,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter the list GUID or share code.';
+                    return 'Please enter the share code.';
+                  }
+                  if (value.length != 6) {
+                    return 'Share codes are exactly 6 characters long.';
                   }
                   return null;
                 },

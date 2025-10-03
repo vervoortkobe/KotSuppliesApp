@@ -7,6 +7,7 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
+  HttpCode,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import type { Response } from 'express';
@@ -17,6 +18,7 @@ export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
   @Post('upload')
+  @HttpCode(201)
   @UseInterceptors(FileInterceptor('file'))
   async upload(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
@@ -26,6 +28,7 @@ export class ImagesController {
   }
 
   @Get(':guid')
+  @HttpCode(200)
   async findOne(@Param('guid') guid: string, @Res() res: Response) {
     const image = await this.imagesService.findOne(guid);
     if (!image) {

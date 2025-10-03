@@ -1,4 +1,10 @@
-import { Controller, Get, Param, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  BadRequestException,
+  HttpCode,
+} from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 
 @Controller('notifications')
@@ -6,6 +12,7 @@ export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
   @Get(':userGuid')
+  @HttpCode(200)
   async findAll(@Param('userGuid') userGuid: string) {
     const notifications = await this.notificationsService.findAll(userGuid);
     if (!notifications) {

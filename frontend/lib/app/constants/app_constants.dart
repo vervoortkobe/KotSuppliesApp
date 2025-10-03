@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // API Base URL
-const String kApiBaseUrl = 'https://api.vervoortkobe.be.eu.org';
+const String kApiBaseUrl = 'https://36e23fcda93e.ngrok-free.app';
 
 // Paddings
 const double kDefaultPadding = 16.0;

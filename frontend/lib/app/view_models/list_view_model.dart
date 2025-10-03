@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kotsupplies/app/models/list.dart';
-import 'package:kotsupplies/app/services/api_service.dart';
+import 'package:kotsupplies/app/services/api_services.dart';
 
 class ListViewModel with ChangeNotifier {
-  final ApiService _apiService = ApiService();
-
   List<ListModel> _userLists = [];
   bool _isLoading = false;
   String? _errorMessage;
@@ -27,7 +25,7 @@ class ListViewModel with ChangeNotifier {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      final user = await _apiService.getUserByGuid(userGuid);
+      final user = await apiServices.users.getUserByGuid(userGuid);
       _userLists = user.accessibleLists ?? [];
     } catch (e) {
       _setErrorMessage('Failed to load lists: $e');
@@ -45,14 +43,15 @@ class ListViewModel with ChangeNotifier {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      final newList = await _apiService.createList(
+      final newList = await apiServices.lists.createList(
         creatorGuid,
         title,
         type.toString().split('.').last,
         description: description,
       );
-      _userLists.add(newList);
-      notifyListeners();
+
+      await fetchUserLists(creatorGuid);
+
       return newList;
     } catch (e) {
       _setErrorMessage('Failed to create list: $e');
@@ -70,7 +69,7 @@ class ListViewModel with ChangeNotifier {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      final updatedList = await _apiService.updateList(
+      final updatedList = await apiServices.lists.updateList(
         listGuid,
         title: title,
         description: description,
@@ -87,11 +86,11 @@ class ListViewModel with ChangeNotifier {
     }
   }
 
-  Future<void> deleteList(String listGuid) async {
+  Future<void> deleteList(String listGuid, String userGuid) async {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      await _apiService.deleteList(listGuid);
+      await apiServices.lists.deleteList(listGuid, userGuid);
       _userLists.removeWhere((list) => list.guid == listGuid);
       notifyListeners();
     } catch (e) {
@@ -101,17 +100,33 @@ class ListViewModel with ChangeNotifier {
     }
   }
 
-  Future<bool> joinList(String shareCode, String userGuid) async {
+  Future<void> leaveList(String listGuid, String userGuid) async {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      ListModel listToJoin = await _apiService.getListByGuid(shareCode);
-      await _apiService.addListUser(listToJoin.guid, userGuid);
+      await apiServices.lists.leaveList(listGuid, userGuid);
+      _userLists.removeWhere((list) => list.guid == listGuid);
+      notifyListeners();
+    } catch (e) {
+      _setErrorMessage('Failed to leave list: $e');
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  Future<ListModel?> joinList(String shareCode, String userGuid) async {
+    _setLoading(true);
+    _setErrorMessage(null);
+    try {
+      ListModel listToJoin = await apiServices.lists.getListByShareCode(
+        shareCode,
+      );
+      await apiServices.lists.addListUser(listToJoin.guid, userGuid);
       await fetchUserLists(userGuid);
-      return true;
+      return listToJoin; // Return the joined list for navigation
     } catch (e) {
       _setErrorMessage('Failed to join list: $e');
-      return false;
+      return null;
     } finally {
       _setLoading(false);
     }

@@ -7,6 +7,7 @@ import {
   Put,
   Delete,
   BadRequestException,
+  HttpCode,
 } from '@nestjs/common';
 import { ListsService } from './lists.service';
 import { CreateListDto, UpdateListDto } from './dto';
@@ -16,16 +17,19 @@ export class ListsController {
   constructor(private readonly listsService: ListsService) {}
 
   @Post()
+  @HttpCode(201)
   async create(@Body() createListDto: CreateListDto) {
     return this.listsService.create(createListDto);
   }
 
   @Get()
+  @HttpCode(200)
   async findAll() {
     return this.listsService.findAll();
   }
 
   @Get(':guid')
+  @HttpCode(200)
   async findOne(@Param('guid') guid: string) {
     const list = await this.listsService.findOne(guid);
     if (!list) {
@@ -34,7 +38,18 @@ export class ListsController {
     return list;
   }
 
+  @Get('share/:shareCode')
+  @HttpCode(200)
+  async findByShareCode(@Param('shareCode') shareCode: string) {
+    const list = await this.listsService.findByShareCode(shareCode);
+    if (!list) {
+      throw new BadRequestException('List not found with provided share code');
+    }
+    return list;
+  }
+
   @Put(':guid')
+  @HttpCode(200)
   async update(
     @Param('guid') guid: string,
     @Body() updateListDto: UpdateListDto,
@@ -42,12 +57,14 @@ export class ListsController {
     return this.listsService.update(guid, updateListDto);
   }
 
-  @Delete(':guid')
-  async delete(@Param('guid') guid: string) {
-    return this.listsService.delete(guid);
+  @Delete(':guid/:userGuid')
+  @HttpCode(200)
+  async delete(@Param('guid') guid: string, @Param('userGuid') userGuid: string) {
+    return this.listsService.delete(guid, userGuid);
   }
 
   @Post(':listGuid/add-user/:userGuid')
+  @HttpCode(200)
   async addUser(
     @Param('listGuid') listGuid: string,
     @Param('userGuid') userGuid: string,
@@ -56,10 +73,20 @@ export class ListsController {
   }
 
   @Post(':listGuid/remove-user/:userGuid')
+  @HttpCode(200)
   async removeUser(
     @Param('listGuid') listGuid: string,
     @Param('userGuid') userGuid: string,
   ) {
     return this.listsService.removeUser(listGuid, userGuid);
+  }
+
+  @Post(':listGuid/leave/:userGuid')
+  @HttpCode(200)
+  async leaveList(
+    @Param('listGuid') listGuid: string,
+    @Param('userGuid') userGuid: string,
+  ) {
+    return this.listsService.leaveList(listGuid, userGuid);
   }
 }

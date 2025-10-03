@@ -1,14 +1,8 @@
-import {
-  Entity,
-  PrimaryColumn,
-  Column,
-  OneToMany,
-  ManyToMany,
-  JoinTable,
-} from 'typeorm';
+import { Entity, PrimaryColumn, Column, OneToMany, ManyToMany } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { List } from './list.entity';
 import { Notification } from './notification.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -21,6 +15,7 @@ export class User {
   @Column({ nullable: true })
   profileImageGuid: string;
 
+  @Exclude()
   @ManyToMany(() => List, (list) => list.users)
   accessibleLists: List[];
 

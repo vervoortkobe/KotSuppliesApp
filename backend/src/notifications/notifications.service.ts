@@ -22,6 +22,12 @@ export class NotificationsService {
   }
 
   async notifyUsers(list: List, excludeUser: User | null, message: string) {
+    // Safety check in case users relation is not loaded
+    if (!list.users || !Array.isArray(list.users)) {
+      console.warn('List users not loaded, skipping notifications');
+      return;
+    }
+
     const notifications = list.users
       .filter((user) => !excludeUser || user.guid !== excludeUser.guid)
       .map((user) => {

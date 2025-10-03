@@ -25,16 +25,29 @@ export class List {
   @Column({ length: 6 })
   shareCode: string;
 
-  @Column({ enum: ['image_count', 'check'] })
+  @Column()
+  creatorGuid: string;
+
+  @Column({
+    type: 'varchar',
+    length: 20,
+    nullable: false,
+  })
   type: 'image_count' | 'check';
 
   @ManyToMany(() => User, (user) => user.accessibleLists)
   @JoinTable()
   users: User[];
 
-  @OneToMany(() => Category, (category) => category.list, { cascade: true })
+  @OneToMany(() => Category, (category) => category.list, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   categories: Category[];
 
-  @OneToMany(() => Item, (item) => item.list, { cascade: true })
+  @OneToMany(() => Item, (item) => item.list, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   items: Item[];
 }

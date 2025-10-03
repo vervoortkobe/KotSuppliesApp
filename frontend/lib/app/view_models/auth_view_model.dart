@@ -1,11 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:kotsupplies/app/models/user.dart';
-import 'package:kotsupplies/app/services/api_service.dart';
+import 'package:kotsupplies/app/services/api_services.dart';
 import 'package:kotsupplies/app/services/storage_service.dart';
 
 class AuthViewModel with ChangeNotifier {
-  final ApiService _apiService = ApiService();
   final StorageService _storageService = StorageService();
 
   User? _currentUser;
@@ -42,7 +41,7 @@ class AuthViewModel with ChangeNotifier {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      _currentUser = await _apiService.login(username);
+      _currentUser = await apiServices.users.login(username);
       await _storageService.saveLoggedInUser(_currentUser!);
       return true;
     } catch (e) {
@@ -57,7 +56,7 @@ class AuthViewModel with ChangeNotifier {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      _currentUser = await _apiService.createUser(
+      _currentUser = await apiServices.users.createUser(
         username,
         profileImage: profileImage,
       );
@@ -79,7 +78,7 @@ class AuthViewModel with ChangeNotifier {
     _setLoading(true);
     _setErrorMessage(null);
     try {
-      _currentUser = await _apiService.updateUser(
+      _currentUser = await apiServices.users.updateUser(
         _currentUser!.guid,
         newUsername,
         profileImage: profileImage,

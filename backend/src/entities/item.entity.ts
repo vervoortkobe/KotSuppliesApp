@@ -2,6 +2,7 @@ import { Entity, PrimaryColumn, Column, ManyToOne } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { List } from './list.entity';
 import { Category } from './category.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Item {
@@ -20,6 +21,7 @@ export class Item {
   @Column({ default: false })
   checked: boolean;
 
+  @Exclude()
   @ManyToOne(() => List, (list) => list.items)
   list: List;
 

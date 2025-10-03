@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kotsupplies/app/widgets/app_loading_indicator.dart';
 import 'package:provider/provider.dart';
-import 'package:kotsupplies/app/services/api_service.dart';
+import 'package:kotsupplies/app/services/api_services.dart';
 import 'package:kotsupplies/app/constants/app_constants.dart';
 import 'package:kotsupplies/app/models/category.dart';
 import 'package:kotsupplies/app/models/item.dart';
@@ -13,8 +13,8 @@ import 'package:kotsupplies/app/view_models/item_view_model.dart';
 class ItemFormScreen extends StatefulWidget {
   final String listGuid;
   final ListType listType;
-  final Item? item; // For editing
-  final List<Category>? categories; // For image_count lists
+  final Item? item;
+  final List<Category>? categories;
 
   const ItemFormScreen({
     super.key,
@@ -79,51 +79,71 @@ class ItemFormScreenState extends State<ItemFormScreen> {
     try {
       if (widget.item == null) {
         // Create new item
-        await itemViewModel.createItem(
+        final newItem = await itemViewModel.createItem(
           widget.listGuid,
           _titleController.text,
-          amount: widget.listType == ListType.imageCount
+          amount: widget.listType == ListType.image_count
               ? int.tryParse(_amountController.text)
               : null,
           checked: widget.listType == ListType.check ? _checked : null,
-          categoryGuid: widget.listType == ListType.imageCount
+          categoryGuid: widget.listType == ListType.image_count
               ? _selectedCategoryGuid
               : null,
-          image: widget.listType == ListType.imageCount ? _pickedImage : null,
+          image: widget.listType == ListType.image_count ? _pickedImage : null,
         );
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Item created successfully!'),
-            backgroundColor: kSuccessColor,
-          ),
-        );
+
+        if (newItem != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Item created successfully!'),
+              backgroundColor: kSuccessColor,
+            ),
+          );
+          if (mounted) {
+            Navigator.of(
+              context,
+            ).pop(true); // Pop with true to indicate success
+          }
+        } else {
+          // Handle case where createItem returned null (error occurred)
+          _showErrorSnackBar(
+            itemViewModel.errorMessage ?? 'Failed to create item.',
+          );
+        }
       } else {
         // Update existing item
         await itemViewModel.updateItem(
           widget.listGuid,
           widget.item!,
           title: _titleController.text,
-          amount: widget.listType == ListType.imageCount
+          amount: widget.listType == ListType.image_count
               ? int.tryParse(_amountController.text)
               : null,
           checked: widget.listType == ListType.check ? _checked : null,
-          categoryGuid: widget.listType == ListType.imageCount
+          categoryGuid: widget.listType == ListType.image_count
               ? _selectedCategoryGuid
               : null,
-          image: widget.listType == ListType.imageCount ? _pickedImage : null,
+          image: widget.listType == ListType.image_count ? _pickedImage : null,
         );
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Item updated successfully!'),
-            backgroundColor: kSuccessColor,
-          ),
-        );
-      }
-      if (mounted) {
-        Navigator.of(context).pop(true); // Pop with true to indicate success
+
+        if (itemViewModel.errorMessage == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Item updated successfully!'),
+              backgroundColor: kSuccessColor,
+            ),
+          );
+          if (mounted) {
+            Navigator.of(
+              context,
+            ).pop(true); // Pop with true to indicate success
+          }
+        } else {
+          _showErrorSnackBar(itemViewModel.errorMessage!);
+        }
       }
     } catch (e) {
-      _showErrorSnackBar(itemViewModel.errorMessage ?? 'Failed to save item.');
+      _showErrorSnackBar('An unexpected error occurred: $e');
     }
   }
 
@@ -133,7 +153,7 @@ class ItemFormScreenState extends State<ItemFormScreen> {
       appBar: AppBar(
         title: Text(
           widget.item == null ? 'Add New Item' : 'Edit Item',
-          style: kHeadingStyle,
+          style: kBodyTextStyle.copyWith(fontWeight: FontWeight.bold),
         ),
         backgroundColor: kPrimaryColor,
         foregroundColor: Colors.white,
@@ -160,7 +180,7 @@ class ItemFormScreenState extends State<ItemFormScreen> {
                 },
               ),
               const SizedBox(height: kDefaultPadding),
-              if (widget.listType == ListType.imageCount) ...[
+              if (widget.listType == ListType.image_count) ...[
                 TextFormField(
                   controller: _amountController,
                   decoration: InputDecoration(
@@ -222,7 +242,7 @@ class ItemFormScreenState extends State<ItemFormScreen> {
                                         widget.item!.imageGuid!.isNotEmpty
                                     ? DecorationImage(
                                         image: NetworkImage(
-                                          ApiService().getImageUrl(
+                                          apiServices.images.getImageUrl(
                                             widget.item!.imageGuid!,
                                           ),
                                         ),

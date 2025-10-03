@@ -1,4 +1,5 @@
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsArray } from 'class-validator';
+import { List } from '../../entities/list.entity';
 
 export class CreateUserDto {
   @IsString()
@@ -25,5 +26,9 @@ export class UserResponseDto {
 
   @IsString()
   @IsOptional()
-  profileImageUrl?: string;
+  profileImageGuid?: string;
+
+  @IsArray()
+  @IsOptional()
+  accessibleLists?: List[];
 }

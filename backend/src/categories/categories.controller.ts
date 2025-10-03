@@ -7,6 +7,7 @@ import {
   Put,
   Delete,
   BadRequestException,
+  HttpCode,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto';
@@ -16,6 +17,7 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post(':listGuid')
+  @HttpCode(201)
   async create(
     @Param('listGuid') listGuid: string,
     @Body() createCategoryDto: CreateCategoryDto,
@@ -24,6 +26,7 @@ export class CategoriesController {
   }
 
   @Get(':listGuid/:categoryGuid')
+  @HttpCode(200)
   async findOne(
     @Param('listGuid') listGuid: string,
     @Param('categoryGuid') categoryGuid: string,
@@ -39,6 +42,7 @@ export class CategoriesController {
   }
 
   @Put(':listGuid/:categoryGuid')
+  @HttpCode(200)
   async update(
     @Param('listGuid') listGuid: string,
     @Param('categoryGuid') categoryGuid: string,
@@ -52,6 +56,7 @@ export class CategoriesController {
   }
 
   @Delete(':listGuid/:categoryGuid')
+  @HttpCode(200)
   async delete(
     @Param('listGuid') listGuid: string,
     @Param('categoryGuid') categoryGuid: string,

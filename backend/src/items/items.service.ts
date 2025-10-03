@@ -87,7 +87,10 @@ export class ItemsService {
     if (!item) {
       throw new BadRequestException('Item not found');
     }
-    const list = await this.listRepository.findOneBy({ guid: listGuid });
+    const list = await this.listRepository.findOne({
+      where: { guid: listGuid },
+      relations: ['users'],
+    });
     if (!list) {
       throw new BadRequestException('List not found');
     }
@@ -135,7 +138,10 @@ export class ItemsService {
     if (!item) {
       throw new BadRequestException('Item not found');
     }
-    const list = await this.listRepository.findOneBy({ guid: listGuid });
+    const list = await this.listRepository.findOne({
+      where: { guid: listGuid },
+      relations: ['users'],
+    });
     if (!list) {
       throw new BadRequestException('List not found');
     }
