@@ -14,9 +14,25 @@ class ItemService extends BaseApiService {
     String? categoryGuid,
     File? image,
   }) async {
+    // If no image, use JSON request for proper type handling
+    if (image == null) {
+      final body = <String, dynamic>{'title': title};
+      if (amount != null) body['amount'] = amount;
+      if (checked != null) body['checked'] = checked;
+      if (categoryGuid != null) body['categoryGuid'] = categoryGuid;
+
+      final response = await postJson('/items/$listGuid', body);
+      return parseJsonResponse(
+        response,
+        (json) => Item.fromJson(json),
+        'Failed to create item',
+      );
+    }
+
+    // If image present, use multipart form data
     final fields = <String, String>{'title': title};
     if (amount != null) fields['amount'] = amount.toString();
-    if (checked != null) fields['checked'] = checked.toString();
+    if (checked != null) fields['checked'] = checked ? 'true' : 'false';
     if (categoryGuid != null) fields['categoryGuid'] = categoryGuid;
 
     final response = await postMultipart(
@@ -52,10 +68,27 @@ class ItemService extends BaseApiService {
     String? categoryGuid,
     File? image,
   }) async {
+    // If no image, use JSON request for proper type handling
+    if (image == null) {
+      final body = <String, dynamic>{};
+      if (title != null) body['title'] = title;
+      if (amount != null) body['amount'] = amount;
+      if (checked != null) body['checked'] = checked;
+      if (categoryGuid != null) body['categoryGuid'] = categoryGuid;
+
+      final response = await putJson('/items/$listGuid/$itemGuid', body);
+      return parseJsonResponse(
+        response,
+        (json) => Item.fromJson(json),
+        'Failed to update item',
+      );
+    }
+
+    // If image present, use multipart form data
     final fields = <String, String>{};
     if (title != null) fields['title'] = title;
     if (amount != null) fields['amount'] = amount.toString();
-    if (checked != null) fields['checked'] = checked.toString();
+    if (checked != null) fields['checked'] = checked ? 'true' : 'false';
     if (categoryGuid != null) fields['categoryGuid'] = categoryGuid;
 
     final response = await putMultipart(

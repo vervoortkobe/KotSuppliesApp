@@ -40,6 +40,26 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
     );
   }
 
+  Future<void> _refreshList() async {
+    final itemViewModel = Provider.of<ItemViewModel>(context, listen: false);
+    try {
+      await itemViewModel.fetchListDetails(widget.listGuid);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('List refreshed'),
+            backgroundColor: kSuccessColor,
+            duration: Duration(seconds: 1),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorSnackBar('Failed to refresh list: $e');
+      }
+    }
+  }
+
   Future<void> _toggleItemChecked(Item item) async {
     final itemViewModel = Provider.of<ItemViewModel>(context, listen: false);
     try {
@@ -213,9 +233,7 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                       ),
                     );
                     if (result == true) {
-                      itemViewModel.fetchListDetails(
-                        widget.listGuid,
-                      ); // Refresh list
+                      itemViewModel.fetchListDetails(widget.listGuid);
                     }
                   },
                 ),
@@ -389,10 +407,13 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      list.description ?? 'No description provided.',
-                      style: kBodyTextStyle.copyWith(
-                        color: Colors.grey.shade700,
+                    Center(
+                      child: Text(
+                        list.description ?? 'No description provided.',
+                        style: kBodyTextStyle.copyWith(
+                          color: Colors.grey.shade700,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                     const SizedBox(height: kSmallPadding),
@@ -442,135 +463,150 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
               ),
               Expanded(
                 child: filteredItems.isEmpty
-                    ? Center(
-                        child: Text(
-                          'No items in this list yet.',
-                          style: kBodyTextStyle.copyWith(color: Colors.grey),
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: filteredItems.length,
-                        itemBuilder: (context, index) {
-                          final item = filteredItems[index];
-                          return Card(
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: kDefaultPadding,
-                              vertical: kSmallPadding / 2,
-                            ),
-                            elevation: 2,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: kDefaultBorderRadius,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(kDefaultPadding),
-                              child: Row(
-                                children: [
-                                  if (list.type == ListType.image_count &&
-                                      item.imageGuid != null)
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: kDefaultPadding,
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: kDefaultBorderRadius,
-                                        child: Image.network(
-                                          apiServices.images.getImageUrl(
-                                            item.imageGuid!,
-                                          ),
-                                          width: 60,
-                                          height: 60,
-                                          fit: BoxFit.cover,
-                                          errorBuilder:
-                                              (context, error, stackTrace) =>
-                                                  const Icon(
-                                                    Icons.broken_image,
-                                                    size: 60,
-                                                    color: Colors.grey,
-                                                  ),
-                                        ),
-                                      ),
-                                    ),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          item.title,
-                                          style: kBodyTextStyle.copyWith(
-                                            fontWeight: FontWeight.w600,
-                                            decoration: item.checked
-                                                ? TextDecoration.lineThrough
-                                                : null,
-                                          ),
-                                        ),
-                                        if (item.category != null)
-                                          Text(
-                                            'Category: ${item.category!.name}',
-                                            style: kSmallTextStyle.copyWith(
-                                              color: Colors.grey.shade600,
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                  if (list.type == ListType.image_count)
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                          icon: const Icon(
-                                            Icons.remove_circle_outline,
-                                            color: kErrorColor,
-                                          ),
-                                          onPressed: () =>
-                                              _decrementItemAmount(item),
-                                        ),
-                                        Text(
-                                          '${item.amount ?? 0}',
-                                          style: kBodyTextStyle,
-                                        ),
-                                        IconButton(
-                                          icon: const Icon(
-                                            Icons.add_circle_outline,
-                                            color: kSuccessColor,
-                                          ),
-                                          onPressed: () =>
-                                              _incrementItemAmount(item),
-                                        ),
-                                      ],
-                                    ),
-                                  if (list.type == ListType.check)
-                                    Checkbox(
-                                      value: item.checked,
-                                      onChanged: (bool? newValue) {
-                                        if (newValue != null) {
-                                          _toggleItemChecked(item);
-                                        }
-                                      },
-                                      activeColor: kPrimaryColor,
-                                    ),
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.edit,
-                                      size: 20,
-                                      color: Colors.grey,
-                                    ),
-                                    onPressed: () =>
-                                        _navigateToItemForm(item: item),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.delete,
-                                      size: 20,
-                                      color: kErrorColor,
-                                    ),
-                                    onPressed: () => _deleteItem(item.guid),
-                                  ),
-                                ],
+                    ? RefreshIndicator(
+                        onRefresh: _refreshList,
+                        child: ListView(
+                          children: [
+                            Container(
+                              height: MediaQuery.of(context).size.height * 0.5,
+                              alignment: Alignment.center,
+                              child: Text(
+                                'No items in this list yet.\nPull to refresh.',
+                                textAlign: TextAlign.center,
+                                style: kBodyTextStyle.copyWith(
+                                  color: Colors.grey,
+                                ),
                               ),
                             ),
-                          );
-                        },
+                          ],
+                        ),
+                      )
+                    : RefreshIndicator(
+                        onRefresh: _refreshList,
+                        child: ListView.builder(
+                          itemCount: filteredItems.length,
+                          itemBuilder: (context, index) {
+                            final item = filteredItems[index];
+                            return Card(
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: kDefaultPadding,
+                                vertical: kSmallPadding / 2,
+                              ),
+                              elevation: 2,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: kDefaultBorderRadius,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(kDefaultPadding),
+                                child: Row(
+                                  children: [
+                                    if (list.type == ListType.check)
+                                      Checkbox(
+                                        value: item.checked,
+                                        onChanged: (bool? newValue) {
+                                          if (newValue != null) {
+                                            _toggleItemChecked(item);
+                                          }
+                                        },
+                                        activeColor: kPrimaryColor,
+                                      ),
+                                    if (list.type == ListType.image_count &&
+                                        item.imageGuid != null)
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: kDefaultPadding,
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: kDefaultBorderRadius,
+                                          child: Image.network(
+                                            apiServices.images.getImageUrl(
+                                              item.imageGuid!,
+                                            ),
+                                            width: 60,
+                                            height: 60,
+                                            fit: BoxFit.cover,
+                                            errorBuilder:
+                                                (context, error, stackTrace) =>
+                                                    const Icon(
+                                                      Icons.broken_image,
+                                                      size: 60,
+                                                      color: Colors.grey,
+                                                    ),
+                                          ),
+                                        ),
+                                      ),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            item.title,
+                                            style: kBodyTextStyle.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                              decoration: item.checked
+                                                  ? TextDecoration.lineThrough
+                                                  : null,
+                                            ),
+                                          ),
+                                          if (item.category != null)
+                                            Text(
+                                              'Category: ${item.category!.name}',
+                                              style: kSmallTextStyle.copyWith(
+                                                color: Colors.grey.shade600,
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                    if (list.type == ListType.image_count)
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(
+                                              Icons.remove_circle_outline,
+                                              color: kErrorColor,
+                                            ),
+                                            onPressed: () =>
+                                                _decrementItemAmount(item),
+                                          ),
+                                          Text(
+                                            '${item.amount ?? 0}',
+                                            style: kBodyTextStyle,
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(
+                                              Icons.add_circle_outline,
+                                              color: kSuccessColor,
+                                            ),
+                                            onPressed: () =>
+                                                _incrementItemAmount(item),
+                                          ),
+                                        ],
+                                      ),
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.edit,
+                                        size: 20,
+                                        color: Colors.grey,
+                                      ),
+                                      onPressed: () =>
+                                          _navigateToItemForm(item: item),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        size: 20,
+                                        color: kErrorColor,
+                                      ),
+                                      onPressed: () => _deleteItem(item.guid),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ),
               ),
             ],

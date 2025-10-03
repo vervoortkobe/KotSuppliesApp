@@ -79,7 +79,7 @@ class ItemFormScreenState extends State<ItemFormScreen> {
     try {
       if (widget.item == null) {
         // Create new item
-        await itemViewModel.createItem(
+        final newItem = await itemViewModel.createItem(
           widget.listGuid,
           _titleController.text,
           amount: widget.listType == ListType.image_count
@@ -91,12 +91,25 @@ class ItemFormScreenState extends State<ItemFormScreen> {
               : null,
           image: widget.listType == ListType.image_count ? _pickedImage : null,
         );
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Item created successfully!'),
-            backgroundColor: kSuccessColor,
-          ),
-        );
+
+        if (newItem != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Item created successfully!'),
+              backgroundColor: kSuccessColor,
+            ),
+          );
+          if (mounted) {
+            Navigator.of(
+              context,
+            ).pop(true); // Pop with true to indicate success
+          }
+        } else {
+          // Handle case where createItem returned null (error occurred)
+          _showErrorSnackBar(
+            itemViewModel.errorMessage ?? 'Failed to create item.',
+          );
+        }
       } else {
         // Update existing item
         await itemViewModel.updateItem(
@@ -112,18 +125,25 @@ class ItemFormScreenState extends State<ItemFormScreen> {
               : null,
           image: widget.listType == ListType.image_count ? _pickedImage : null,
         );
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Item updated successfully!'),
-            backgroundColor: kSuccessColor,
-          ),
-        );
-      }
-      if (mounted) {
-        Navigator.of(context).pop(true); // Pop with true to indicate success
+
+        if (itemViewModel.errorMessage == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Item updated successfully!'),
+              backgroundColor: kSuccessColor,
+            ),
+          );
+          if (mounted) {
+            Navigator.of(
+              context,
+            ).pop(true); // Pop with true to indicate success
+          }
+        } else {
+          _showErrorSnackBar(itemViewModel.errorMessage!);
+        }
       }
     } catch (e) {
-      _showErrorSnackBar(itemViewModel.errorMessage ?? 'Failed to save item.');
+      _showErrorSnackBar('An unexpected error occurred: $e');
     }
   }
 
@@ -133,7 +153,7 @@ class ItemFormScreenState extends State<ItemFormScreen> {
       appBar: AppBar(
         title: Text(
           widget.item == null ? 'Add New Item' : 'Edit Item',
-          style: kHeadingStyle,
+          style: kBodyTextStyle.copyWith(fontWeight: FontWeight.bold),
         ),
         backgroundColor: kPrimaryColor,
         foregroundColor: Colors.white,

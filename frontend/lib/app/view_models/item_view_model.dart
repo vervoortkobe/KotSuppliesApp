@@ -55,7 +55,7 @@ class ItemViewModel with ChangeNotifier {
         categoryGuid: categoryGuid,
         image: image,
       );
-      await fetchListDetails(listGuid);
+      // Don't call fetchListDetails here - let the calling screen handle the refresh
       return newItem;
     } catch (e) {
       _setErrorMessage('Failed to create item: $e');
