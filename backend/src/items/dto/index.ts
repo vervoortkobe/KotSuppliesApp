@@ -10,12 +10,14 @@ import { Type } from 'class-transformer';
 
 export class CreateItemDto {
   @IsString()
-  title: string;
+  title!: string;
 
+  @Type(() => Number)
   @IsNumber()
   @IsOptional()
   amount?: number;
 
+  @Type(() => Boolean)
   @IsBoolean()
   @IsOptional()
   checked?: boolean;
@@ -30,10 +32,12 @@ export class UpdateItemDto {
   @IsOptional()
   title?: string;
 
+  @Type(() => Number)
   @IsNumber()
   @IsOptional()
   amount?: number;
 
+  @Type(() => Boolean)
   @IsBoolean()
   @IsOptional()
   checked?: boolean;
@@ -47,5 +51,5 @@ export class BulkItemDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateItemDto)
-  items: { guid: string; data: UpdateItemDto }[];
+  items!: { guid: string; data: UpdateItemDto }[];
 }

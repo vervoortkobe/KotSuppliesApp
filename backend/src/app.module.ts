@@ -10,16 +10,18 @@ import { CategoriesModule } from './categories/categories.module';
 import { ImagesModule } from './images/images.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import * as path from 'path';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'better-sqlite3',
-      database: 'kotsupplies.db',
+      database: path.join(__dirname, '..', 'kotsupplies.db'),
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
+
     UsersModule,
     ListsModule,
     ItemsModule,
