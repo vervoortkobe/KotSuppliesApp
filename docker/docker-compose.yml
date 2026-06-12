@@ -4,7 +4,6 @@ services:
       context: ../backend
     container_name: kot-supplies-app
     environment:
-      - API_URL=${API_URL}
       - PORT=${PORT}
     ports:
       - "3000:3000"
